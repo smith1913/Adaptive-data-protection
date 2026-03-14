@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SecureBank — ADPE v6.0 · Intelligent Data Protection Platform</title>
+<title>SecureBank — ADPE v7.0 · Intelligent Data Protection Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 :root{
@@ -445,10 +445,140 @@ select.fi{cursor:pointer;}
 .access-val{color:var(--amber2);font-weight:600;}
 .access-denied{color:rgba(196,122,10,0.4);}
 
+/* ═══════════════════════════════════════════════
+   NOTIFICATION SYSTEM
+═══════════════════════════════════════════════ */
+
+/* Bell button in header */
+.notif-btn{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  width:36px;height:36px;border-radius:9px;border:1px solid var(--brd2);
+  background:var(--bg3);cursor:pointer;transition:all .18s;flex-shrink:0;font-size:15px;
+}
+.notif-btn:hover{border-color:var(--gold);background:var(--goldfade);}
+.notif-badge{
+  position:absolute;top:-5px;right:-5px;min-width:16px;height:16px;
+  border-radius:8px;background:var(--red2);color:#fff;font-family:var(--mono);
+  font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  padding:0 4px;border:2px solid var(--bg);opacity:0;transition:opacity .2s;
+}
+.notif-badge.visible{opacity:1;}
+.notif-badge.pulse{animation:notifPulse 1s ease-out;}
+@keyframes notifPulse{0%{transform:scale(1)}30%{transform:scale(1.5)}100%{transform:scale(1)}}
+
+/* Bell ring animation */
+.bell-ring{animation:bellRing .6s ease-out;}
+@keyframes bellRing{0%{transform:rotate(0)}20%{transform:rotate(-20deg)}40%{transform:rotate(20deg)}60%{transform:rotate(-15deg)}80%{transform:rotate(10deg)}100%{transform:rotate(0)}}
+
+/* Notification drawer overlay */
+#notif-overlay{
+  position:fixed;inset:0;z-index:450;pointer-events:none;
+  background:rgba(3,5,13,0);transition:background .28s;
+}
+#notif-overlay.open{pointer-events:all;background:rgba(3,5,13,0.55);}
+
+/* Notification drawer panel */
+#notif-drawer{
+  position:fixed;top:0;right:0;bottom:0;width:380px;z-index:451;
+  background:var(--bg2);border-left:1px solid var(--brd2);
+  transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+#notif-drawer.open{transform:translateX(0);}
+
+.nd-header{
+  padding:16px 18px;border-bottom:1px solid var(--brd);
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(6,10,21,0.9);backdrop-filter:blur(12px);flex-shrink:0;
+}
+.nd-title{font-family:var(--serif);font-size:18px;color:var(--gold);}
+.nd-sub{font-size:7px;font-family:var(--mono);color:var(--txt2);letter-spacing:1.5px;margin-top:2px;}
+.nd-close{width:28px;height:28px;border-radius:6px;border:1px solid var(--brd);background:transparent;
+  color:var(--txt2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;
+  transition:all .15s;}
+.nd-close:hover{border-color:var(--red2);color:var(--red2);}
+
+.nd-filters{
+  display:flex;gap:5px;padding:10px 18px;border-bottom:1px solid var(--brd);flex-shrink:0;
+}
+.nd-filter{
+  padding:3px 9px;border-radius:12px;font-family:var(--mono);font-size:7px;letter-spacing:.8px;
+  border:1px solid var(--brd);background:transparent;color:var(--txt2);cursor:pointer;transition:all .15s;
+}
+.nd-filter.active{background:var(--redfade);border-color:rgba(194,53,53,0.3);color:var(--red2);}
+.nd-filter.active-all{background:var(--goldfade);border-color:var(--brd2);color:var(--gold);}
+
+.nd-body{flex:1;overflow-y:auto;padding:10px;}
+
+.notif-empty{
+  text-align:center;padding:40px 20px;font-family:var(--mono);
+  font-size:9px;color:var(--txt3);line-height:2;
+}
+.notif-empty-icon{font-size:32px;margin-bottom:10px;opacity:.3;}
+
+/* Notification card */
+.nc{
+  padding:12px 14px;border-radius:var(--r3);margin-bottom:7px;
+  border:1px solid;position:relative;overflow:hidden;animation:ncSlide .3s ease-out;
+  cursor:default;transition:border-color .15s;
+}
+@keyframes ncSlide{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.nc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
+
+.nc-critical{background:rgba(194,53,53,0.06);border-color:rgba(194,53,53,0.2);}
+.nc-critical::before{background:var(--red2);}
+.nc-critical:hover{border-color:rgba(194,53,53,0.4);}
+
+.nc-warning{background:rgba(196,122,10,0.06);border-color:rgba(196,122,10,0.2);}
+.nc-warning::before{background:var(--amber2);}
+.nc-warning:hover{border-color:rgba(196,122,10,0.4);}
+
+.nc-info{background:rgba(30,111,194,0.05);border-color:rgba(30,111,194,0.18);}
+.nc-info::before{background:var(--blue2);}
+
+.nc-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.nc-type{font-family:var(--mono);font-size:7px;letter-spacing:1.5px;font-weight:700;
+  padding:2px 6px;border-radius:3px;}
+.nc-time{font-family:var(--mono);font-size:7px;color:var(--txt3);}
+.nc-title{font-family:var(--sans);font-size:11px;font-weight:600;margin-bottom:3px;line-height:1.3;}
+.nc-body{font-family:var(--mono);font-size:8px;color:var(--txt2);line-height:1.7;}
+.nc-meta{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px;}
+.nc-chip{font-family:var(--mono);font-size:7px;padding:1px 5px;border-radius:3px;border:1px solid;}
+.nc-unread-dot{
+  position:absolute;top:10px;right:10px;width:5px;height:5px;
+  border-radius:50%;background:var(--red2);
+}
+
+/* Manager dashboard alert strip */
+.mgr-alert-strip{
+  display:none;padding:10px 14px;
+  background:linear-gradient(135deg,rgba(194,53,53,0.06),rgba(196,122,10,0.04));
+  border:1px solid rgba(194,53,53,0.22);border-radius:var(--r2);margin-bottom:12px;
+}
+.mgr-alert-strip.visible{display:flex;align-items:center;gap:10px;animation:fadeIn .3s ease;}
+.mas-icon{font-size:18px;flex-shrink:0;animation:bellRing 1s ease-out;}
+.mas-text{flex:1;}
+.mas-title{font-size:11px;font-weight:700;color:var(--red2);margin-bottom:2px;}
+.mas-sub{font-size:8px;font-family:var(--mono);color:rgba(194,53,53,0.55);line-height:1.6;}
+.mas-count{
+  font-family:var(--serif);font-size:28px;color:var(--red2);flex-shrink:0;line-height:1;
+}
+
+/* Live threat indicator in manager topbar */
+.live-threat-indicator{
+  display:none;align-items:center;gap:5px;padding:4px 10px;border-radius:12px;
+  background:rgba(194,53,53,0.1);border:1px solid rgba(194,53,53,0.25);
+  font-family:var(--mono);font-size:8px;color:var(--red2);animation:threatPulse 2s infinite;
+}
+.live-threat-indicator.visible{display:flex;}
+@keyframes threatPulse{0%,100%{box-shadow:0 0 0 0 rgba(194,53,53,0)}50%{box-shadow:0 0 0 4px rgba(194,53,53,0.1)}}
+
+/* Notification page header flash */
+@keyframes headerFlash{0%,100%{border-color:var(--brd2)}50%{border-color:rgba(194,53,53,0.5)}}
+.hdr.threat-active{animation:headerFlash 1.5s ease 3;}
+
 @media(max-width:750px){
-  .portal-cards,.dgrid,.dgrid3,.fr2,.fr3,.ml-features-grid,.module-banner{grid-template-columns:1fr;}
-  .upgrade-banner{flex-direction:column;align-items:flex-start;}
-  .upgrade-btns{width:100%;}
+  #notif-drawer{width:100%;}
 }
 </style>
 </head>
@@ -460,7 +590,7 @@ select.fi{cursor:pointer;}
   <div class="hdr-mark">🏦</div>
   <div>
     <div class="hdr-name">SecureBank</div>
-    <div class="hdr-sub">ADAPTIVE DATA PROTECTION ENGINE · v6.0 · INTELLIGENT PLATFORM</div>
+    <div class="hdr-sub">ADAPTIVE DATA PROTECTION ENGINE · v7.0 · INTELLIGENT PLATFORM</div>
   </div>
   <div class="hdr-chips">
     <div class="chip chip-green"><span class="blink">●</span>Context Engine</div>
@@ -468,6 +598,10 @@ select.fi{cursor:pointer;}
     <div class="chip chip-cyan">🛡 Threat Intel</div>
     <div class="chip chip-gold">PDE Active</div>
     <div class="chip chip-red"><span class="blink">●</span>Audit Live</div>
+    <div class="notif-btn" id="notif-bell-btn" onclick="toggleNotifDrawer()" title="Security Alerts">
+      <span id="notif-bell-icon">🔔</span>
+      <span class="notif-badge" id="notif-badge">0</span>
+    </div>
   </div>
 </div>
 
@@ -476,7 +610,7 @@ select.fi{cursor:pointer;}
 <!-- ══════════════════════════════════════════════ -->
 <div class="screen active" id="s-portal">
   <div class="portal-hero">
-    <div class="portal-badge">⚡ ADPE v6.0 — 7 PROTECTION MODULES ACTIVE</div>
+    <div class="portal-badge">⚡ ADPE v7.0 — 7 PROTECTION MODULES ACTIVE</div>
     <div class="portal-title">Intelligent Data Protection</div>
     <div class="portal-sub">Context-aware · Rule-based classification · ML classifier · Threat intelligence · PDE · Pseudonymisation · Anonymisation</div>
   </div>
@@ -856,9 +990,20 @@ select.fi{cursor:pointer;}
     <div class="tb-av" style="background:var(--goldfade);border:2px solid rgba(212,168,67,0.2);">👔</div>
     <div><div class="tb-nm" id="md-id-display"></div><div class="tb-rl" style="color:var(--gold)">BRANCH MANAGER · AUTHENTICATED · ALL MODULES ACTIVE</div></div>
     <div class="tb-r">
+      <div class="live-threat-indicator" id="mgr-live-threat"><span class="blink">●</span>LIVE THREAT</div>
       <div class="chip chip-gold"><span class="blink">●</span>Verified</div>
       <button class="logout-btn" onclick="doMgrLogout()">Log out & Rotate</button>
     </div>
+  </div>
+
+  <!-- Manager alert strip (shown when threats detected) -->
+  <div class="mgr-alert-strip" id="mgr-alert-strip">
+    <div class="mas-icon">🚨</div>
+    <div class="mas-text">
+      <div class="mas-title" id="mas-title">Unauthorized access attempts detected</div>
+      <div class="mas-sub" id="mas-sub">Unknown sessions have attempted to view protected customer data. PDE blocked all sensitive fields. See Security Alerts panel for details.</div>
+    </div>
+    <div class="mas-count" id="mas-count">0</div>
   </div>
 
   <div class="dgrid">
@@ -1093,6 +1238,41 @@ select.fi{cursor:pointer;}
 </div>
 
 </div><!-- .app -->
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- NOTIFICATION DRAWER                           -->
+<!-- ══════════════════════════════════════════════ -->
+<div id="notif-overlay" onclick="closeNotifDrawer()"></div>
+<div id="notif-drawer">
+  <div class="nd-header">
+    <div>
+      <div class="nd-title">Security Alerts</div>
+      <div class="nd-sub">MANAGER NOTIFICATION CENTER · LIVE THREAT FEED</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span id="nd-unread-count" style="font-family:var(--mono);font-size:8px;color:var(--red2);display:none;"></span>
+      <button class="nd-close" onclick="closeNotifDrawer()">✕</button>
+    </div>
+  </div>
+
+  <div class="nd-filters">
+    <button class="nd-filter active-all" id="nf-all" onclick="filterNotifs('all')">ALL</button>
+    <button class="nd-filter" id="nf-critical" onclick="filterNotifs('CRITICAL')">🚨 CRITICAL</button>
+    <button class="nd-filter" id="nf-warning" onclick="filterNotifs('WARNING')">⚠ WARNING</button>
+    <button class="nd-filter" id="nf-info" onclick="filterNotifs('INFO')">ℹ INFO</button>
+    <button class="nd-filter" style="margin-left:auto;" onclick="clearAllNotifs()">Clear all</button>
+  </div>
+
+  <div class="nd-body" id="nd-body">
+    <div class="notif-empty">
+      <div class="notif-empty-icon">🔔</div>
+      No security alerts yet.<br/>
+      Alerts appear when third-party,<br/>
+      unknown, or suspicious sessions<br/>
+      attempt to access customer data.
+    </div>
+  </div>
+</div>
 
 <!-- HACK TERMINAL -->
 <div id="hack-overlay">
@@ -1880,6 +2060,8 @@ async function managerLogin(){
   renderAudit('md-audit');
   goTo('s-mgr-dash');
   toast('✓ Authenticated · '+records.length+' records · All modules active');
+  alertManagerLogin(uid);
+  updateManagerAlertStrip(); // refresh alert strip with any pending threats
 }
 
 function loadManagerRecord(rec){
@@ -1972,6 +2154,8 @@ function thirdPartyEnter(){
 
   goTo('s-third');
   toast('⚠ External session blocked — all 7 modules responded');
+  // Fire manager notification
+  alertThirdPartyAccess(mlResult.score, ruleResult.triggered.map(r=>r.id).join(', '), tiResult.tiLevel);
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2012,6 +2196,7 @@ function showHack(){
   ];
   const c=document.getElementById('hack-lines'); c.innerHTML='';
   document.getElementById('hack-overlay').style.display='flex';
+  alertHackAttempt(); // Notify manager of hack attempt
   lines.forEach((l,i)=>setTimeout(()=>{
     const d=document.createElement('div'); d.className='hline '+l.c; d.textContent=l.t||'\u00A0';
     c.appendChild(d); c.scrollTop=c.scrollHeight;
@@ -2149,12 +2334,272 @@ async function unknownPersonEnter() {
 
   goTo('s-unknown');
   toast('⚠ Unknown session — data masked by PDE · restricted view only');
+  // Notify manager
+  alertUnknownAccess(mlResult.score, ruleResult.triggered.map(r=>r.id).join(', ') || 'none');
+}
+
+// ═══════════════════════════════════════════════════════
+// 19. NOTIFICATION SYSTEM
+// ═══════════════════════════════════════════════════════
+
+const NOTIFICATIONS = [];
+let _notifFilter = 'all';
+let _notifUnread = 0;
+
+/**
+ * Push a security alert notification
+ * @param {object} opts - { level:'CRITICAL'|'WARNING'|'INFO', title, body, chips[], role, mlScore, ip, action }
+ */
+function pushNotification(opts){
+  const n = {
+    id: 'N-' + Date.now().toString(36).toUpperCase(),
+    ts: new Date(),
+    level: opts.level || 'WARNING',
+    title: opts.title || 'Security Event',
+    body: opts.body || '',
+    chips: opts.chips || [],
+    role: opts.role || 'unknown',
+    mlScore: opts.mlScore || 0,
+    action: opts.action || '—',
+    read: false,
+  };
+  NOTIFICATIONS.unshift(n);
+  _notifUnread++;
+
+  // Update badge
+  updateNotifBadge();
+
+  // Ring the bell
+  const bell = document.getElementById('notif-bell-icon');
+  const btn  = document.getElementById('notif-bell-btn');
+  bell.classList.remove('bell-ring');
+  void bell.offsetWidth; // reflow
+  bell.classList.add('bell-ring');
+  setTimeout(()=>bell.classList.remove('bell-ring'), 700);
+
+  // Flash header if critical
+  if(n.level === 'CRITICAL'){
+    const hdr = document.querySelector('.hdr');
+    hdr.classList.remove('threat-active');
+    void hdr.offsetWidth;
+    hdr.classList.add('threat-active');
+    setTimeout(()=>hdr.classList.remove('threat-active'), 5000);
+  }
+
+  // Update manager alert strip (always, even if manager not logged in yet)
+  updateManagerAlertStrip();
+
+  // Show live threat indicator in manager dash
+  const liveThreat = document.getElementById('mgr-live-threat');
+  if(liveThreat && (n.level === 'CRITICAL' || n.level === 'WARNING')){
+    liveThreat.classList.add('visible');
+    setTimeout(()=>liveThreat.classList.remove('visible'), 12000);
+  }
+
+  // Re-render drawer if open
+  if(document.getElementById('notif-drawer').classList.contains('open')){
+    renderNotifDrawer();
+  }
+
+  // Show a special toast for critical events
+  if(n.level === 'CRITICAL'){
+    toast(`🚨 ALERT: ${n.title} — check Security Alerts`);
+  } else if(n.level === 'WARNING'){
+    toast(`⚠ WARNING: ${n.title}`);
+  }
+}
+
+function updateNotifBadge(){
+  const badge = document.getElementById('notif-badge');
+  const unread = NOTIFICATIONS.filter(n=>!n.read).length;
+  badge.textContent = unread > 9 ? '9+' : String(unread);
+  badge.classList.toggle('visible', unread > 0);
+  badge.classList.remove('pulse');
+  void badge.offsetWidth;
+  if(unread > 0) badge.classList.add('pulse');
+
+  // Also update unread count in drawer header
+  const uc = document.getElementById('nd-unread-count');
+  if(uc){
+    if(unread > 0){
+      uc.textContent = unread + ' unread';
+      uc.style.display = 'inline';
+    } else {
+      uc.style.display = 'none';
+    }
+  }
+}
+
+function updateManagerAlertStrip(){
+  const strip = document.getElementById('mgr-alert-strip');
+  if(!strip) return;
+  const threats = NOTIFICATIONS.filter(n=>n.level==='CRITICAL'||n.level==='WARNING');
+  if(threats.length === 0){ strip.classList.remove('visible'); return; }
+
+  strip.classList.add('visible');
+  const latest = threats[0];
+  document.getElementById('mas-title').textContent = latest.title;
+  document.getElementById('mas-sub').textContent =
+    `${threats.length} threat event(s) recorded. Latest: ${latest.role.toUpperCase()} — ML score ${latest.mlScore}/100. PDE protected all sensitive fields.`;
+  document.getElementById('mas-count').textContent = threats.length;
+}
+
+function renderNotifDrawer(){
+  const body = document.getElementById('nd-body');
+  const filtered = _notifFilter === 'all'
+    ? NOTIFICATIONS
+    : NOTIFICATIONS.filter(n => n.level === _notifFilter);
+
+  if(filtered.length === 0){
+    body.innerHTML = `<div class="notif-empty"><div class="notif-empty-icon">🔔</div>No alerts in this category.</div>`;
+    return;
+  }
+
+  const levelClass = {CRITICAL:'nc-critical', WARNING:'nc-warning', INFO:'nc-info'};
+  const levelColor = {CRITICAL:'#F05050', WARNING:'#F0A025', INFO:'#4A9AE8'};
+  const levelBg    = {CRITICAL:'rgba(194,53,53,0.1)', WARNING:'rgba(196,122,10,0.1)', INFO:'rgba(30,111,194,0.08)'};
+
+  body.innerHTML = filtered.map(n => {
+    const ago = formatTimeAgo(n.ts);
+    const chips = n.chips.map(c =>
+      `<span class="nc-chip" style="background:${c.bg||'rgba(194,53,53,0.08)'};color:${c.c||'#F05050'};border-color:${c.br||'rgba(194,53,53,0.25)'};">${c.label}</span>`
+    ).join('');
+    return `
+      <div class="nc ${levelClass[n.level]||'nc-info'}">
+        ${!n.read ? '<div class="nc-unread-dot"></div>' : ''}
+        <div class="nc-row1">
+          <span class="nc-type" style="background:${levelBg[n.level]};color:${levelColor[n.level]};border:1px solid ${levelColor[n.level]}33;">${n.level}</span>
+          <span class="nc-time">${ago}</span>
+        </div>
+        <div class="nc-title" style="color:${levelColor[n.level]}">${n.title}</div>
+        <div class="nc-body">${n.body}</div>
+        ${chips ? `<div class="nc-meta">${chips}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function formatTimeAgo(date){
+  const sec = Math.floor((Date.now() - date.getTime()) / 1000);
+  if(sec < 10) return 'just now';
+  if(sec < 60) return sec + 's ago';
+  if(sec < 3600) return Math.floor(sec/60) + 'm ago';
+  return Math.floor(sec/3600) + 'h ago';
+}
+
+function toggleNotifDrawer(){
+  const drawer  = document.getElementById('notif-drawer');
+  const overlay = document.getElementById('notif-overlay');
+  const isOpen  = drawer.classList.contains('open');
+  if(isOpen){
+    closeNotifDrawer();
+  } else {
+    // Mark all as read when opening
+    NOTIFICATIONS.forEach(n => n.read = true);
+    updateNotifBadge();
+    renderNotifDrawer();
+    drawer.classList.add('open');
+    overlay.classList.add('open');
+  }
+}
+
+function closeNotifDrawer(){
+  document.getElementById('notif-drawer').classList.remove('open');
+  document.getElementById('notif-overlay').classList.remove('open');
+}
+
+function filterNotifs(level){
+  _notifFilter = level;
+  document.querySelectorAll('.nd-filter').forEach(b => {
+    b.classList.remove('active','active-all');
+  });
+  const btn = document.getElementById('nf-'+level.toLowerCase());
+  if(btn) btn.classList.add(level === 'all' ? 'active-all' : 'active');
+  renderNotifDrawer();
+}
+
+function clearAllNotifs(){
+  NOTIFICATIONS.length = 0;
+  _notifUnread = 0;
+  updateNotifBadge();
+  updateManagerAlertStrip();
+  renderNotifDrawer();
+  document.getElementById('mgr-live-threat')?.classList.remove('visible');
+}
+
+// ─── ALERT BUILDERS ──────────────────────────────────
+
+function alertThirdPartyAccess(mlScore, rulesHit, tiLevel){
+  pushNotification({
+    level: 'CRITICAL',
+    title: '🚨 Third-Party Intrusion Attempt',
+    body: `An external, unauthenticated session attempted to access customer data via API/TOR channel. All 14 PII fields were blocked. ML classifier scored THREAT_DETECTED. Rule engine triggered ${rulesHit}.`,
+    role: 'third_party',
+    mlScore,
+    action: 'FULL_REDACTION + ANONYMISATION',
+    chips: [
+      {label:'ML: '+mlScore+'/100',       bg:'rgba(155,114,240,0.08)', c:'#9B72F0', br:'rgba(155,114,240,0.25)'},
+      {label:'TI: '+tiLevel.replace('_',' '),  bg:'rgba(194,53,53,0.08)', c:'#F05050', br:'rgba(194,53,53,0.25)'},
+      {label:'RULES: '+rulesHit.split(',').length+' HIT', bg:'rgba(240,160,37,0.08)', c:'#F0A025', br:'rgba(240,160,37,0.25)'},
+      {label:'PDE: ALL BLOCKED',          bg:'rgba(194,53,53,0.08)', c:'#F05050', br:'rgba(194,53,53,0.25)'},
+      {label:'CHANNEL: TOR',              bg:'rgba(107,66,200,0.08)', c:'#9B72F0', br:'rgba(107,66,200,0.25)'},
+    ],
+  });
+}
+
+function alertHackAttempt(){
+  pushNotification({
+    level: 'CRITICAL',
+    title: '⚡ Active Hack Attempt Simulated',
+    body: `Bypass script adpe_bypass.py detected targeting internal endpoint. Override flags --bypass-ml and --dump-all used. All 7 modules responded. Zero data extracted. Audit record created.`,
+    role: 'attacker',
+    mlScore: 100,
+    action: 'ALL_MODULES_BLOCK',
+    chips: [
+      {label:'TOOL: adpe_bypass.py',     bg:'rgba(194,53,53,0.08)', c:'#F05050', br:'rgba(194,53,53,0.25)'},
+      {label:'ML: 100/100 CRITICAL',     bg:'rgba(155,114,240,0.08)', c:'#9B72F0', br:'rgba(155,114,240,0.25)'},
+      {label:'IOC: EXFILTRATION',        bg:'rgba(194,53,53,0.08)', c:'#F05050', br:'rgba(194,53,53,0.25)'},
+      {label:'ZERO DATA EXTRACTED',      bg:'rgba(13,158,107,0.08)', c:'#24D49A', br:'rgba(13,158,107,0.25)'},
+    ],
+  });
+}
+
+function alertUnknownAccess(mlScore, rulesHit){
+  pushNotification({
+    level: 'WARNING',
+    title: '⚠ Unknown Visitor — Restricted Access',
+    body: `An unauthenticated visitor (Unknown Person) accessed a restricted data preview. PDE applied partial masking. Critical fields protected. Identity unverified — session logged for review.`,
+    role: 'unknown_visitor',
+    mlScore,
+    action: 'PARTIAL_MASK + BLUR',
+    chips: [
+      {label:'ML: '+mlScore+'/100',       bg:'rgba(196,122,10,0.08)', c:'#F0A025', br:'rgba(196,122,10,0.25)'},
+      {label:'SESSION: GUEST',            bg:'rgba(196,122,10,0.08)', c:'#F0A025', br:'rgba(196,122,10,0.25)'},
+      {label:'PDE: PARTIAL MASK',         bg:'rgba(30,111,194,0.08)', c:'#4A9AE8', br:'rgba(30,111,194,0.25)'},
+      {label:'IDENTITY: UNVERIFIED',      bg:'rgba(196,122,10,0.08)', c:'#F0A025', br:'rgba(196,122,10,0.25)'},
+    ],
+  });
+}
+
+function alertManagerLogin(uid){
+  pushNotification({
+    level: 'INFO',
+    title: 'ℹ Manager Session Authenticated',
+    body: `Employee ${uid} successfully authenticated and started a manager session. All modules active. Full decrypted view granted.`,
+    role: 'manager',
+    mlScore: 8,
+    action: 'STANDARD_VIEW',
+    chips: [
+      {label:'ROLE: MANAGER',     bg:'rgba(212,168,67,0.08)', c:'#D4A843', br:'rgba(212,168,67,0.25)'},
+      {label:'AUTH: SUCCESS',     bg:'rgba(13,158,107,0.08)', c:'#24D49A', br:'rgba(13,158,107,0.25)'},
+    ],
+  });
 }
 
 // ═══════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════
-openDB().then(()=>toast('✓ ADPE v6.0 ready · 7 modules loaded · Unknown person view added')).catch(()=>toast('⚠ DB unavailable'));
+openDB().then(()=>toast('✓ ADPE v7.0 ready · 7 modules loaded · Notification system active')).catch(()=>toast('⚠ DB unavailable'));
 genCreds();
 </script>
 </body>
