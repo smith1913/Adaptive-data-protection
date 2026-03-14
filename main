@@ -1,0 +1,2161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SecureBank — ADPE v6.0 · Intelligent Data Protection Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#03050D;--bg2:#060A15;--bg3:#0A1020;--bg4:#0F1830;--bg5:#162040;
+  --gold:#D4A843;--gold2:#F0C96A;--gold3:#8B6A1A;--goldfade:rgba(212,168,67,0.08);
+  --blue:#1E6FC2;--blue2:#4A9AE8;--bluefade:rgba(30,111,194,0.08);
+  --green:#0D9E6B;--green2:#24D49A;--greenfade:rgba(13,158,107,0.08);
+  --red:#C23535;--red2:#F05050;--redfade:rgba(194,53,53,0.08);
+  --amber:#C47A0A;--amber2:#F0A025;--amberfade:rgba(196,122,10,0.08);
+  --violet:#6B42C8;--violet2:#9B72F0;--violetfade:rgba(107,66,200,0.08);
+  --cyan:#0A8FA8;--cyan2:#22C8E8;--cyanfade:rgba(10,143,168,0.08);
+  --txt:#E8E2D4;--txt2:#6A7590;--txt3:#3A4460;
+  --brd:rgba(212,168,67,0.08);--brd2:rgba(212,168,67,0.18);--brd3:rgba(212,168,67,0.35);
+  --serif:'Playfair Display',serif;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Space Grotesk',sans-serif;
+  --r:14px;--r2:10px;--r3:7px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--txt);font-family:var(--sans);min-height:100vh;overflow-x:hidden;font-size:14px;}
+
+/* Atmosphere */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 55% 35% at 15% 5%,rgba(212,168,67,0.035) 0%,transparent 65%),
+    radial-gradient(ellipse 45% 30% at 85% 95%,rgba(30,111,194,0.03) 0%,transparent 60%),
+    radial-gradient(ellipse 30% 20% at 90% 20%,rgba(107,66,200,0.025) 0%,transparent 55%),
+    linear-gradient(rgba(212,168,67,0.012) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(212,168,67,0.012) 1px,transparent 1px);
+  background-size:100% 100%,100% 100%,100% 100%,48px 48px,48px 48px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:2px;}
+
+.app{position:relative;z-index:1;max-width:1300px;margin:0 auto;padding:16px;}
+
+/* HEADER */
+.hdr{
+  display:flex;align-items:center;gap:14px;padding:12px 18px;
+  background:rgba(6,10,21,0.85);border:1px solid var(--brd2);border-radius:var(--r);
+  margin-bottom:20px;backdrop-filter:blur(12px);
+}
+.hdr-mark{width:40px;height:40px;border:1.5px solid var(--gold);border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  background:var(--goldfade);flex-shrink:0;}
+.hdr-name{font-family:var(--serif);font-size:21px;color:var(--gold);letter-spacing:.3px;}
+.hdr-sub{font-size:8px;color:var(--txt2);font-family:var(--mono);letter-spacing:2px;margin-top:1px;}
+.hdr-chips{margin-left:auto;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;
+  font-family:var(--mono);font-size:8px;letter-spacing:1px;font-weight:500;}
+.chip-gold{background:var(--goldfade);border:1px solid var(--brd2);color:var(--gold);}
+.chip-violet{background:var(--violetfade);border:1px solid rgba(107,66,200,0.25);color:var(--violet2);}
+.chip-green{background:var(--greenfade);border:1px solid rgba(13,158,107,0.25);color:var(--green2);}
+.chip-cyan{background:var(--cyanfade);border:1px solid rgba(10,143,168,0.25);color:var(--cyan2);}
+.chip-red{background:var(--redfade);border:1px solid rgba(194,53,53,0.25);color:var(--red2);}
+.blink{animation:blink 2.8s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* SCREENS */
+.screen{display:none;}
+.screen.active{display:block;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* PORTAL */
+.portal-hero{text-align:center;padding:32px 0 28px;}
+.portal-title{font-family:var(--serif);font-size:42px;color:var(--gold);line-height:1.1;margin-bottom:8px;}
+.portal-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 16px;border-radius:20px;
+  background:var(--violetfade);border:1px solid rgba(107,66,200,0.2);
+  color:var(--violet2);font-family:var(--mono);font-size:9px;letter-spacing:1.5px;margin-bottom:10px;}
+.portal-sub{color:var(--txt2);font-size:11px;font-family:var(--mono);letter-spacing:.3px;}
+
+/* Module Banner */
+.module-banner{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:6px;
+  background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);
+  padding:12px;margin-bottom:20px;
+}
+.mb-item{text-align:center;padding:8px 6px;border-radius:var(--r3);background:var(--bg3);border:1px solid var(--brd);cursor:default;transition:border-color .2s;}
+.mb-item:hover{border-color:var(--brd2);}
+.mb-icon{font-size:18px;margin-bottom:4px;}
+.mb-name{font-size:7px;font-family:var(--mono);color:var(--txt2);letter-spacing:.8px;text-transform:uppercase;line-height:1.4;}
+.mb-status{font-size:7px;font-family:var(--mono);color:var(--green2);margin-top:2px;}
+
+.portal-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:900px;margin:0 auto;}
+.pc{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);padding:26px 18px;
+  text-align:center;cursor:pointer;transition:transform .22s,border-color .22s,box-shadow .22s;position:relative;overflow:hidden;}
+.pc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity .22s;}
+.pc:hover{transform:translateY(-4px);}
+.pc:hover::after{opacity:1;}
+.pc-user::after{background:linear-gradient(90deg,transparent,var(--blue2),transparent);}
+.pc-mgr::after{background:linear-gradient(90deg,transparent,var(--gold2),transparent);}
+.pc-3rd::after{background:linear-gradient(90deg,transparent,var(--red2),transparent);}
+.pc:hover.pc-user{border-color:rgba(30,111,194,0.3);box-shadow:0 14px 36px rgba(30,111,194,0.08);}
+.pc:hover.pc-mgr{border-color:rgba(212,168,67,0.3);box-shadow:0 14px 36px rgba(212,168,67,0.07);}
+.pc:hover.pc-3rd{border-color:rgba(194,53,53,0.3);box-shadow:0 14px 36px rgba(194,53,53,0.06);}
+.pc-icon{font-size:40px;display:block;margin-bottom:12px;}
+.pc-name{font-family:var(--serif);font-size:20px;margin-bottom:5px;}
+.pc-desc{font-size:10px;color:var(--txt2);font-family:var(--mono);line-height:1.7;}
+.pc-badge{display:inline-block;margin-top:12px;padding:3px 10px;border-radius:20px;font-size:8px;font-family:var(--mono);letter-spacing:1px;}
+
+/* FORMS */
+.form-wrap{max-width:560px;margin:24px auto;}
+.form-card{background:var(--bg2);border:1px solid var(--brd2);border-radius:var(--r);padding:28px;position:relative;overflow:hidden;}
+.form-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.fc-user::before{background:linear-gradient(90deg,transparent,var(--blue2),transparent);}
+.fc-mgr::before{background:linear-gradient(90deg,transparent,var(--gold2),transparent);}
+.fc-3rd::before{background:linear-gradient(90deg,transparent,var(--red2),transparent);}
+.form-h{font-family:var(--serif);font-size:26px;text-align:center;margin-bottom:4px;}
+.form-s{text-align:center;color:var(--txt2);font-size:10px;font-family:var(--mono);margin-bottom:22px;line-height:1.7;}
+.fg{margin-bottom:11px;}
+.fl{font-size:8px;color:var(--txt2);font-family:var(--mono);letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:5px;}
+.fi{width:100%;background:var(--bg3);border:1px solid var(--brd);color:var(--txt);
+  padding:9px 12px;border-radius:var(--r3);font-family:var(--mono);font-size:11px;outline:none;
+  transition:border-color .18s,box-shadow .18s;}
+.fi:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--goldfade);}
+.fi::placeholder{color:var(--txt3);}
+select.fi{cursor:pointer;}
+.fh{font-size:8px;color:var(--txt2);font-family:var(--mono);margin-top:3px;line-height:1.5;}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;}
+.ferr{font-size:9px;color:var(--red2);font-family:var(--mono);margin-top:4px;display:none;}
+
+/* Context Section */
+.ctx-section{
+  background:rgba(10,143,168,0.04);border:1px solid rgba(10,143,168,0.15);
+  border-radius:var(--r2);padding:12px;margin:12px 0;
+}
+.ctx-title{font-size:8px;color:var(--cyan2);font-family:var(--mono);letter-spacing:2px;margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;}
+.ctx-title::before{content:'🌐';}
+
+/* ML Section */
+.ml-section{
+  background:rgba(107,66,200,0.04);border:1px solid rgba(107,66,200,0.15);
+  border-radius:var(--r2);padding:12px;margin:12px 0;
+}
+.ml-sec-title{font-size:8px;color:var(--violet2);font-family:var(--mono);letter-spacing:2px;margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;}
+.ml-sec-title::before{content:'⚡';}
+
+/* Threat Intel Section */
+.ti-section{
+  background:rgba(194,53,53,0.03);border:1px solid rgba(194,53,53,0.12);
+  border-radius:var(--r2);padding:12px;margin:12px 0;
+}
+.ti-title{font-size:8px;color:var(--red2);font-family:var(--mono);letter-spacing:2px;margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;}
+.ti-title::before{content:'🛡';}
+
+/* Buttons */
+.btn{width:100%;padding:11px;border:none;border-radius:var(--r3);font-family:var(--sans);font-weight:600;font-size:12px;cursor:pointer;transition:all .2s;margin-top:5px;letter-spacing:.3px;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold3));color:#050810;}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 5px 20px rgba(212,168,67,0.2);}
+.btn-blue{background:linear-gradient(135deg,#1E6FC2,#124FA0);color:#fff;}
+.btn-blue:hover{transform:translateY(-1px);box-shadow:0 5px 20px rgba(30,111,194,0.2);}
+.btn-red{background:var(--redfade);border:1px solid rgba(194,53,53,0.3);color:var(--red2);}
+.btn-red:hover{background:rgba(194,53,53,0.12);}
+.btn-sm{width:auto;padding:5px 12px;font-size:10px;margin-top:0;}
+.back{text-align:center;margin-top:12px;font-size:10px;color:var(--txt2);font-family:var(--mono);cursor:pointer;transition:color .18s;}
+.back:hover{color:var(--gold);}
+
+/* Creds box */
+.creds-box{background:var(--bg3);border:1px solid var(--brd3);border-radius:var(--r2);padding:14px;margin-bottom:18px;position:relative;overflow:hidden;}
+.creds-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.creds-title{font-size:8px;color:var(--gold);font-family:var(--mono);letter-spacing:2px;margin-bottom:10px;}
+.cred-row{display:flex;align-items:center;padding:8px 10px;background:var(--bg4);border-radius:var(--r3);margin-bottom:5px;gap:8px;border:1px solid var(--brd);}
+.cred-k{font-size:8px;color:var(--txt2);font-family:var(--mono);letter-spacing:1px;min-width:80px;}
+.cred-v{font-family:var(--mono);font-size:12px;color:var(--gold2);font-weight:500;flex:1;letter-spacing:.8px;}
+.copy-btn{font-size:8px;font-family:var(--mono);padding:3px 8px;border-radius:4px;border:1px solid var(--brd2);background:transparent;color:var(--txt2);cursor:pointer;transition:all .15s;flex-shrink:0;}
+.copy-btn:hover{border-color:var(--gold);color:var(--gold);}
+.creds-warn{font-size:8px;color:var(--txt2);font-family:var(--mono);line-height:1.6;margin-top:7px;padding:7px;background:var(--goldfade);border-radius:5px;}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;gap:10px;padding:9px 14px;background:rgba(6,10,21,0.7);
+  border:1px solid var(--brd);border-radius:var(--r2);margin-bottom:16px;backdrop-filter:blur(8px);}
+.tb-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.tb-nm{font-weight:600;font-size:12px;}
+.tb-rl{font-size:8px;color:var(--txt2);font-family:var(--mono);margin-top:1px;letter-spacing:.4px;}
+.tb-r{margin-left:auto;display:flex;align-items:center;gap:7px;}
+.logout-btn{padding:4px 10px;border-radius:5px;font-size:9px;font-family:var(--mono);cursor:pointer;
+  transition:all .18s;border:1px solid var(--brd);background:transparent;color:var(--txt2);}
+.logout-btn:hover{border-color:var(--red2);color:var(--red2);}
+
+/* DASHBOARD GRID */
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.dgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.card{background:var(--bg2);border:1px solid var(--brd);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,168,67,0.12),transparent);}
+.card-h{font-family:var(--mono);font-size:8px;color:var(--txt2);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;
+  display:flex;align-items:center;gap:7px;}
+.card-h::after{content:'';flex:1;height:1px;background:var(--brd);}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:14px;background:var(--bg3);padding:4px;border-radius:var(--r2);border:1px solid var(--brd);}
+.tab{flex:1;padding:6px 10px;border-radius:7px;font-family:var(--mono);font-size:9px;letter-spacing:.5px;
+  border:none;cursor:pointer;background:transparent;color:var(--txt2);transition:all .18s;text-align:center;}
+.tab.active{background:var(--bg4);color:var(--gold);border:1px solid var(--brd2);}
+.tab:hover:not(.active){color:var(--txt);}
+
+/* Profile header */
+.prof-h{display:flex;align-items:center;gap:10px;padding:11px;background:var(--bg3);border-radius:var(--r2);border:1px solid var(--brd);margin-bottom:10px;}
+.prof-av{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:2px solid var(--brd2);}
+.prof-nm{font-family:var(--serif);font-size:17px;}
+.prof-id{font-size:8px;font-family:var(--mono);color:var(--txt2);margin-top:2px;letter-spacing:.4px;}
+
+/* Field rows */
+.flist{display:flex;flex-direction:column;gap:3px;}
+.frow{display:flex;align-items:center;padding:7px 9px;background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r3);gap:7px;transition:border-color .15s;}
+.frow:hover{border-color:var(--brd2);}
+.frow-icon{font-size:11px;width:14px;text-align:center;flex-shrink:0;}
+.frow-lbl{font-family:var(--mono);font-size:8px;color:var(--txt2);min-width:110px;letter-spacing:.2px;}
+.frow-val{flex:1;font-size:10px;font-family:var(--mono);font-weight:500;}
+.fv-plain{color:var(--txt);}
+.fv-gold{color:var(--gold2);}
+.fv-masked{color:var(--txt2);}
+.fv-enc{color:var(--violet2);font-size:9px;}
+.fv-pseudo{color:var(--cyan2);font-size:9px;}
+.fv-anon{color:var(--amber2);font-size:9px;}
+.fv-red{color:rgba(194,53,53,0.5);font-size:9px;}
+.sdot{width:4px;height:4px;border-radius:50%;flex-shrink:0;}
+.mtag{font-size:7px;font-family:var(--mono);padding:2px 5px;border-radius:3px;text-transform:uppercase;letter-spacing:.4px;flex-shrink:0;font-weight:500;}
+
+/* ML PANEL */
+.ml-panel{background:linear-gradient(135deg,rgba(107,66,200,0.05),rgba(30,111,194,0.03));
+  border:1px solid rgba(107,66,200,0.18);border-radius:var(--r2);padding:13px;margin-bottom:12px;}
+.ml-panel-h{font-size:8px;color:var(--violet2);font-family:var(--mono);letter-spacing:2px;margin-bottom:10px;
+  display:flex;align-items:center;justify-content:space-between;}
+.ml-score-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+.ml-score-big{font-family:var(--serif);font-size:44px;line-height:1;}
+.ml-features-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:9px;}
+.ml-feat{background:var(--bg4);border-radius:6px;padding:7px 9px;border:1px solid var(--brd);}
+.mf-name{font-size:7px;color:var(--txt2);font-family:var(--mono);letter-spacing:.6px;margin-bottom:3px;}
+.mf-score{font-family:var(--mono);font-size:11px;font-weight:600;margin-bottom:2px;}
+.mf-bar{height:2px;border-radius:1px;background:var(--bg5);overflow:hidden;}
+.mf-fill{height:100%;border-radius:1px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.ml-total-bar{height:5px;border-radius:3px;background:var(--bg5);overflow:hidden;margin-top:7px;}
+.ml-total-fill{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.ml-badge{padding:4px 10px;border-radius:5px;font-family:var(--mono);font-size:9px;font-weight:600;}
+
+/* RULE ENGINE PANEL */
+.rule-panel{background:rgba(212,168,67,0.03);border:1px solid var(--brd2);border-radius:var(--r2);padding:12px;margin-bottom:12px;}
+.rule-h{font-size:8px;color:var(--gold);font-family:var(--mono);letter-spacing:2px;margin-bottom:10px;}
+.rule-row{display:flex;align-items:center;padding:6px 8px;background:var(--bg3);border:1px solid var(--brd);border-radius:5px;margin-bottom:4px;gap:8px;font-family:var(--mono);font-size:9px;}
+.rule-id{color:var(--gold2);min-width:60px;font-weight:600;}
+.rule-cond{color:var(--txt2);flex:1;}
+.rule-result{font-size:8px;padding:2px 6px;border-radius:3px;}
+
+/* THREAT INTEL PANEL */
+.ti-panel{background:rgba(194,53,53,0.03);border:1px solid rgba(194,53,53,0.15);border-radius:var(--r2);padding:12px;margin-bottom:12px;}
+.ti-h{font-size:8px;color:var(--red2);font-family:var(--mono);letter-spacing:2px;margin-bottom:10px;display:flex;justify-content:space-between;}
+.ti-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(194,53,53,0.05);font-family:var(--mono);font-size:9px;}
+.ti-row:last-child{border:none;}
+.ti-icon{font-size:11px;width:16px;}
+.ti-lbl{color:var(--txt2);flex:1;}
+.ti-val{font-weight:600;}
+.ti-safe{color:var(--green2);}
+.ti-warn{color:var(--amber2);}
+.ti-danger{color:var(--red2);}
+
+/* METADATA TAGS */
+.meta-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+.meta-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:3px;font-family:var(--mono);font-size:7px;letter-spacing:.5px;font-weight:500;}
+
+/* PROTECTION DECISION */
+.pde-panel{background:linear-gradient(135deg,rgba(13,158,107,0.04),rgba(0,0,0,0));
+  border:1px solid rgba(13,158,107,0.15);border-radius:var(--r2);padding:12px;margin-bottom:12px;}
+.pde-h{font-size:8px;color:var(--green2);font-family:var(--mono);letter-spacing:2px;margin-bottom:10px;}
+.pde-row{display:flex;align-items:center;padding:6px 8px;background:var(--bg3);border:1px solid var(--brd);border-radius:5px;margin-bottom:4px;gap:8px;font-family:var(--mono);font-size:9px;}
+.pde-field{color:var(--txt2);min-width:100px;}
+.pde-class{min-width:60px;}
+.pde-method{flex:1;}
+.pde-reason{color:var(--txt2);font-size:8px;}
+
+/* LOCK STATUS */
+.lock-panel{border-radius:var(--r2);padding:12px;border:1px solid;margin-top:10px;}
+.lock-h{font-size:8px;font-family:var(--mono);letter-spacing:2px;margin-bottom:9px;display:flex;align-items:center;gap:6px;}
+.lock-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-family:var(--mono);font-size:9px;}
+.lock-row:last-child{border:none;}
+
+/* Context Panel */
+.ctx-panel{background:rgba(10,143,168,0.03);border:1px solid rgba(10,143,168,0.15);border-radius:var(--r2);padding:12px;margin-bottom:12px;}
+.ctx-h{font-size:8px;color:var(--cyan2);font-family:var(--mono);letter-spacing:2px;margin-bottom:10px;}
+.ctx-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(10,143,168,0.04);font-family:var(--mono);font-size:9px;}
+.ctx-row:last-child{border:none;}
+.ctx-icon{font-size:11px;width:16px;}
+.ctx-lbl{color:var(--txt2);min-width:110px;}
+.ctx-val{color:var(--cyan2);font-weight:500;}
+
+/* Audit */
+.ae{padding:9px 11px;background:var(--bg3);border:1px solid var(--brd);border-left:3px solid var(--gold3);
+  border-radius:6px;margin-bottom:5px;font-family:var(--mono);font-size:8px;line-height:2;animation:fadeIn .3s ease;}
+.ak{color:var(--txt2);}
+.av{color:var(--txt);}
+.aid{color:var(--gold);font-size:7px;}
+
+/* Compliance */
+.comp-row{display:flex;gap:5px;flex-wrap:wrap;}
+.ct{padding:3px 9px;border-radius:4px;background:var(--greenfade);border:1px solid rgba(13,158,107,0.2);
+  color:var(--green2);font-family:var(--mono);font-size:8px;font-weight:500;}
+
+/* Records table */
+.rec-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:9px;}
+.rec-table th{text-align:left;padding:6px 9px;color:var(--txt2);border-bottom:1px solid var(--brd);font-size:7px;letter-spacing:1.5px;text-transform:uppercase;}
+.rec-table td{padding:7px 9px;border-bottom:1px solid rgba(212,168,67,0.03);color:var(--txt);}
+.rec-table tbody tr{cursor:pointer;transition:background .12s;}
+.rec-table tbody tr:hover td{background:var(--goldfade);}
+.rec-table tbody tr.selected td{background:rgba(212,168,67,0.05);}
+.risk-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:9px;font-size:7px;font-weight:600;font-family:var(--mono);}
+
+/* Denied */
+.denied{padding:13px 18px;background:var(--redfade);border:1px solid rgba(194,53,53,0.25);border-radius:var(--r2);margin-bottom:16px;}
+.denied-t{font-size:12px;font-weight:700;color:var(--red2);margin-bottom:2px;}
+.denied-s{font-size:9px;color:rgba(194,53,53,0.6);font-family:var(--mono);line-height:1.6;}
+
+/* Success */
+.sbanner{padding:10px 14px;background:var(--greenfade);border:1px solid rgba(13,158,107,0.2);border-radius:var(--r3);margin-bottom:12px;font-family:var(--mono);font-size:9px;color:var(--green2);line-height:1.6;}
+
+/* Stats grid */
+.s3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;}
+.sbox{padding:10px;text-align:center;background:var(--bg3);border:1px solid var(--brd);border-radius:var(--r3);}
+.sn{font-family:var(--serif);font-size:20px;}
+.sl{font-size:7px;color:var(--txt2);font-family:var(--mono);letter-spacing:1px;margin-top:2px;}
+
+/* Threat bars */
+.threat-big{font-family:var(--serif);font-size:42px;line-height:1;}
+.tbar{height:4px;border-radius:2px;background:var(--bg5);overflow:hidden;margin-top:6px;}
+.tfill{height:100%;border-radius:2px;transition:width .9s cubic-bezier(.4,0,.2,1);}
+.irow{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;padding:5px 0;border-bottom:1px solid var(--brd);}
+.irow:last-child{border:none;}
+.irow::before{content:'⚠';font-size:9px;}
+
+/* HACK TERMINAL */
+#hack-overlay{position:fixed;inset:0;z-index:500;background:#000;display:none;flex-direction:column;
+  align-items:center;justify-content:center;font-family:var(--mono);}
+.hack-box{width:100%;max-width:720px;padding:28px;}
+.hack-h{font-size:13px;color:#DC2626;margin-bottom:18px;letter-spacing:2px;}
+.hline{font-size:10px;line-height:2.1;}
+.hc{color:#16A34A;}.hd{color:#1C1C1C;}.hr{color:#0A0A0A;background:#070707;padding:1px 5px;border-radius:2px;}.he{color:#DC2626;}
+.hcl{margin-top:22px;padding:7px 20px;border:1px solid #1A1A1A;border-radius:6px;background:transparent;
+  color:#333;font-family:var(--mono);font-size:9px;cursor:pointer;transition:all .18s;}
+.hcl:hover{border-color:#DC2626;color:#DC2626;}
+
+/* Toast */
+.toast{position:fixed;bottom:18px;right:18px;z-index:600;padding:9px 14px;background:var(--bg2);
+  border:1px solid var(--brd2);border-radius:9px;font-family:var(--mono);font-size:9px;color:var(--gold);
+  transform:translateY(40px);opacity:0;transition:all .25s cubic-bezier(.4,0,.2,1);pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* Context awareness indicator */
+.ctx-indicator{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:5px;
+  font-family:var(--mono);font-size:8px;font-weight:500;}
+
+/* Pipeline visualization */
+.pipeline{display:flex;align-items:center;gap:4px;margin:10px 0;overflow-x:auto;padding:2px;}
+.pipe-step{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;min-width:70px;}
+.pipe-box{padding:6px 8px;border-radius:5px;font-family:var(--mono);font-size:7px;letter-spacing:.5px;
+  text-align:center;border:1px solid;font-weight:600;}
+.pipe-arrow{color:var(--txt3);font-size:10px;flex-shrink:0;}
+.pipe-label{font-size:6px;color:var(--txt3);font-family:var(--mono);letter-spacing:.5px;}
+
+/* Real-world problem badge */
+.rwp-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:4px;
+  font-family:var(--mono);font-size:7px;letter-spacing:.5px;background:rgba(196,122,10,0.08);
+  border:1px solid rgba(196,122,10,0.2);color:var(--amber2);}
+
+/* Tab content */
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* Unknown Person chip */
+.chip-amber{background:var(--amberfade);border:1px solid rgba(196,122,10,0.25);color:var(--amber2);}
+
+/* Unknown Person portal card */
+.pc-unk::after{background:linear-gradient(90deg,transparent,var(--amber2),transparent);}
+.pc:hover.pc-unk{border-color:rgba(196,122,10,0.3);box-shadow:0 14px 36px rgba(196,122,10,0.07);}
+
+/* UNKNOWN VIEW styles */
+.unk-warning{padding:13px 18px;background:var(--amberfade);border:1px solid rgba(196,122,10,0.3);border-radius:var(--r2);margin-bottom:16px;}
+.unk-warning-t{font-size:12px;font-weight:700;color:var(--amber2);margin-bottom:2px;}
+.unk-warning-s{font-size:9px;color:rgba(196,122,10,0.6);font-family:var(--mono);line-height:1.6;}
+
+/* Glassmask blur overlay on field rows */
+.frow-blur{position:relative;overflow:hidden;}
+.frow-blur .frow-val::after{
+  content:'';position:absolute;inset:0;backdrop-filter:blur(5px);
+  background:rgba(3,5,13,0.45);border-radius:3px;pointer-events:none;
+}
+.frow-blur .frow-val{position:relative;filter:blur(4px);user-select:none;}
+.frow-blur .frow-lbl{color:rgba(196,122,10,0.4)!important;}
+
+/* Lock icon overlay on field rows */
+.frow-lock{position:relative;}
+.frow-lock::after{
+  content:'🔒';position:absolute;right:8px;top:50%;transform:translateY(-50%);
+  font-size:9px;opacity:.5;pointer-events:none;
+}
+
+/* Identity blur card */
+.unk-id-block{
+  padding:18px;background:rgba(196,122,10,0.04);border:1px solid rgba(196,122,10,0.18);
+  border-radius:var(--r2);margin-bottom:14px;text-align:center;
+}
+.unk-id-avatar{font-size:42px;margin-bottom:8px;filter:grayscale(1);opacity:.4;}
+.unk-id-name{font-family:var(--serif);font-size:22px;color:rgba(196,122,10,0.3);
+  filter:blur(6px);user-select:none;margin-bottom:4px;}
+.unk-id-sub{font-size:9px;font-family:var(--mono);color:rgba(196,122,10,0.3);}
+
+/* Upgrade banner */
+.upgrade-banner{
+  padding:16px 20px;background:linear-gradient(135deg,rgba(196,122,10,0.07),rgba(212,168,67,0.04));
+  border:1px solid rgba(196,122,10,0.25);border-radius:var(--r2);margin-bottom:16px;
+  display:flex;align-items:center;gap:14px;
+}
+.upgrade-icon{font-size:28px;flex-shrink:0;}
+.upgrade-text{flex:1;}
+.upgrade-title{font-family:var(--serif);font-size:16px;color:var(--amber2);margin-bottom:3px;}
+.upgrade-sub{font-size:9px;font-family:var(--mono);color:rgba(196,122,10,0.55);line-height:1.6;}
+.upgrade-btns{display:flex;gap:7px;flex-shrink:0;}
+.btn-amber{background:linear-gradient(135deg,var(--amber),#8B5A00);color:#fff;border:none;}
+.btn-amber:hover{transform:translateY(-1px);box-shadow:0 5px 20px rgba(196,122,10,0.25);}
+
+/* Partial reveal: show first char, blur rest */
+.partial-reveal{letter-spacing:2px;}
+
+/* Access score bar for unknown */
+.access-score-panel{
+  background:rgba(196,122,10,0.04);border:1px solid rgba(196,122,10,0.18);
+  border-radius:var(--r2);padding:14px;margin-bottom:12px;
+}
+.access-score-h{font-size:8px;color:var(--amber2);font-family:var(--mono);letter-spacing:2px;margin-bottom:10px;}
+.access-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(196,122,10,0.05);font-family:var(--mono);font-size:9px;}
+.access-item:last-child{border:none;}
+.access-icon{font-size:11px;width:16px;}
+.access-lbl{color:var(--txt2);flex:1;}
+.access-val{color:var(--amber2);font-weight:600;}
+.access-denied{color:rgba(196,122,10,0.4);}
+
+@media(max-width:750px){
+  .portal-cards,.dgrid,.dgrid3,.fr2,.fr3,.ml-features-grid,.module-banner{grid-template-columns:1fr;}
+  .upgrade-banner{flex-direction:column;align-items:flex-start;}
+  .upgrade-btns{width:100%;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-mark">🏦</div>
+  <div>
+    <div class="hdr-name">SecureBank</div>
+    <div class="hdr-sub">ADAPTIVE DATA PROTECTION ENGINE · v6.0 · INTELLIGENT PLATFORM</div>
+  </div>
+  <div class="hdr-chips">
+    <div class="chip chip-green"><span class="blink">●</span>Context Engine</div>
+    <div class="chip chip-violet">⚡ ML Classifier</div>
+    <div class="chip chip-cyan">🛡 Threat Intel</div>
+    <div class="chip chip-gold">PDE Active</div>
+    <div class="chip chip-red"><span class="blink">●</span>Audit Live</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SCREEN 1: PORTAL                              -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="screen active" id="s-portal">
+  <div class="portal-hero">
+    <div class="portal-badge">⚡ ADPE v6.0 — 7 PROTECTION MODULES ACTIVE</div>
+    <div class="portal-title">Intelligent Data Protection</div>
+    <div class="portal-sub">Context-aware · Rule-based classification · ML classifier · Threat intelligence · PDE · Pseudonymisation · Anonymisation</div>
+  </div>
+
+  <!-- Module Status Banner -->
+  <div class="module-banner">
+    <div class="mb-item">
+      <div class="mb-icon">📋</div>
+      <div class="mb-name">Rule-Based<br/>Classifier</div>
+      <div class="mb-status">● Active</div>
+    </div>
+    <div class="mb-item">
+      <div class="mb-icon">🧠</div>
+      <div class="mb-name">ML<br/>Classifier</div>
+      <div class="mb-status">● Active</div>
+    </div>
+    <div class="mb-item">
+      <div class="mb-icon">🌐</div>
+      <div class="mb-name">Context<br/>Awareness</div>
+      <div class="mb-status">● Active</div>
+    </div>
+    <div class="mb-item">
+      <div class="mb-icon">🛡</div>
+      <div class="mb-name">Threat<br/>Intelligence</div>
+      <div class="mb-status">● Active</div>
+    </div>
+    <div class="mb-item">
+      <div class="mb-icon">🔐</div>
+      <div class="mb-name">Protection<br/>Decision Engine</div>
+      <div class="mb-status">● Active</div>
+    </div>
+    <div class="mb-item">
+      <div class="mb-icon">🏷</div>
+      <div class="mb-name">Metadata<br/>Tagger</div>
+      <div class="mb-status">● Active</div>
+    </div>
+    <div class="mb-item">
+      <div class="mb-icon">📝</div>
+      <div class="mb-name">Context<br/>Audit Log</div>
+      <div class="mb-status">● Active</div>
+    </div>
+  </div>
+
+  <div class="portal-cards" style="grid-template-columns:repeat(4,1fr);max-width:1200px;">
+    <div class="pc pc-user" onclick="goTo('s-user-reg')">
+      <span class="pc-icon">👤</span>
+      <div class="pc-name" style="color:var(--blue2)">Customer Portal</div>
+      <div class="pc-desc">Submit banking profile.<br/>Context engine analyzes session.<br/>ML classifier + rule engine applied.<br/>Metadata tagged & stored.</div>
+      <span class="pc-badge" style="background:var(--bluefade);border:1px solid rgba(30,111,194,0.25);color:var(--blue2)">Register & classify</span>
+    </div>
+    <div class="pc pc-mgr" onclick="goTo('s-mgr-login')">
+      <span class="pc-icon">👔</span>
+      <div class="pc-name" style="color:var(--gold)">Manager Portal</div>
+      <div class="pc-desc">One-time session credentials.<br/>Full PDE-driven protection view.<br/>Threat intel + adaptive lock.<br/>All 7 modules visible.</div>
+      <span class="pc-badge" style="background:var(--goldfade);border:1px solid var(--brd2);color:var(--gold)">Authenticated access</span>
+    </div>
+    <div class="pc pc-3rd" onclick="thirdPartyEnter()">
+      <span class="pc-icon">🌐</span>
+      <div class="pc-name" style="color:var(--red2)">Third-Party View</div>
+      <div class="pc-desc">External context detected.<br/>Threat score: 100/100.<br/>All fields redacted/anonymised.<br/>Intrusion auto-logged.</div>
+      <span class="pc-badge" style="background:var(--redfade);border:1px solid rgba(194,53,53,0.25);color:var(--red2)">Hard blocked</span>
+    </div>
+    <div class="pc pc-unk" onclick="unknownPersonEnter()">
+      <span class="pc-icon">🕵️</span>
+      <div class="pc-name" style="color:var(--amber2)">Unknown Person</div>
+      <div class="pc-desc">Unauthenticated visitor.<br/>Identity unverified — data masked.<br/>Partial fields visible only.<br/>Access score computed.</div>
+      <span class="pc-badge" style="background:var(--amberfade);border:1px solid rgba(196,122,10,0.25);color:var(--amber2)">Restricted view</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SCREEN 2: USER REGISTRATION                   -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="screen" id="s-user-reg">
+  <div class="form-wrap" style="max-width:580px;">
+    <div class="form-card fc-user">
+      <div class="form-h" style="color:var(--blue2)">Customer Registration</div>
+      <div class="form-s">Context engine, ML classifier & rule engine compute protection level<br/>All data tagged with metadata & stored in IndexedDB</div>
+
+      <div class="fr2">
+        <div class="fg"><label class="fl">Full Name *</label><input class="fi" id="u-name" placeholder="Arjun Mehta"/></div>
+        <div class="fg"><label class="fl">Date of Birth *</label><input class="fi" id="u-dob" placeholder="14 Mar 1988"/></div>
+      </div>
+      <div class="fg"><label class="fl">Account Number *</label><input class="fi" id="u-accno" placeholder="4782-9201-3847-1029"/></div>
+      <div class="fr2">
+        <div class="fg"><label class="fl">PAN Number *</label><input class="fi" id="u-pan" placeholder="BNZPM1234F"/></div>
+        <div class="fg"><label class="fl">Aadhaar *</label><input class="fi" id="u-aadhaar" placeholder="2841 6734 9201"/></div>
+      </div>
+      <div class="fr2">
+        <div class="fg"><label class="fl">Mobile *</label><input class="fi" id="u-phone" placeholder="+91 98765 43210"/></div>
+        <div class="fg"><label class="fl">Balance (₹) *</label><input class="fi" id="u-balance" placeholder="8,42,500"/></div>
+      </div>
+      <div class="fg"><label class="fl">Email *</label><input class="fi" id="u-email" placeholder="arjun@email.com"/></div>
+      <div class="fg"><label class="fl">Address *</label><input class="fi" id="u-addr" placeholder="42, Sector 15, Noida - 201301"/></div>
+      <div class="fr2">
+        <div class="fg"><label class="fl">IFSC Code</label><input class="fi" id="u-ifsc" placeholder="HDFC0001234"/></div>
+        <div class="fg"><label class="fl">Credit Score</label><input class="fi" id="u-cscore" placeholder="782"/></div>
+      </div>
+      <div class="fr2">
+        <div class="fg"><label class="fl">Account Type</label><input class="fi" id="u-type" placeholder="Savings — Premium"/></div>
+        <div class="fg"><label class="fl">Home Branch</label><input class="fi" id="u-branch" placeholder="Connaught Place"/></div>
+      </div>
+      <div class="fg"><label class="fl">Last Transaction</label><input class="fi" id="u-txn" placeholder="₹ 12,000 — 12 Mar 2026"/></div>
+
+      <!-- Context Awareness -->
+      <div class="ctx-section">
+        <div class="ctx-title">CONTEXT AWARENESS ENGINE — SESSION SIGNALS</div>
+        <div class="fr2">
+          <div class="fg">
+            <label class="fl">Regulatory Jurisdiction</label>
+            <select class="fi" id="ctx-reg">
+              <option value="india_rbi">India — RBI / DPDP Act</option>
+              <option value="eu_gdpr">EU — GDPR</option>
+              <option value="us_pci">US — PCI-DSS</option>
+              <option value="global">Global / Multi-jurisdiction</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Access Channel</label>
+            <select class="fi" id="ctx-channel">
+              <option value="web_app">Web Application</option>
+              <option value="mobile">Mobile App</option>
+              <option value="api">API / Integration</option>
+              <option value="branch">Branch Terminal</option>
+            </select>
+          </div>
+        </div>
+        <div class="fr2">
+          <div class="fg">
+            <label class="fl">Data Purpose</label>
+            <select class="fi" id="ctx-purpose">
+              <option value="account_mgmt">Account Management</option>
+              <option value="kyc">KYC / Compliance</option>
+              <option value="analytics">Analytics / Reporting</option>
+              <option value="third_party">Third-party Sharing</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Session Type</label>
+            <select class="fi" id="ctx-session">
+              <option value="authenticated">Authenticated User</option>
+              <option value="guest">Guest / Unverified</option>
+              <option value="admin">Admin Session</option>
+              <option value="batch">Batch Processing</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ML Risk Signals -->
+      <div class="ml-section">
+        <div class="ml-sec-title">ML CLASSIFIER — BEHAVIOURAL FEATURE VECTORS</div>
+        <div class="fr2">
+          <div class="fg">
+            <label class="fl">Login failure count</label>
+            <select class="fi" id="ml-logins">
+              <option value="0">0 — None</option>
+              <option value="1">1–2 — Minor</option>
+              <option value="3">3–5 — Suspicious</option>
+              <option value="5">5+ — Critical</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Network location</label>
+            <select class="fi" id="ml-loc">
+              <option value="internal">Internal network</option>
+              <option value="vpn">VPN / Proxy</option>
+              <option value="external">External / Unknown</option>
+              <option value="tor">TOR / Darknet</option>
+            </select>
+          </div>
+        </div>
+        <div class="fr2">
+          <div class="fg">
+            <label class="fl">Access time</label>
+            <select class="fi" id="ml-time">
+              <option value="business">Business hours</option>
+              <option value="evening">Evening (6–10pm)</option>
+              <option value="latenight">Late night (10pm–4am)</option>
+              <option value="wee">Wee hours (4–6am)</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Transaction velocity</label>
+            <select class="fi" id="ml-vel">
+              <option value="normal">Normal</option>
+              <option value="high">High frequency</option>
+              <option value="bulk">Bulk / Unusual</option>
+              <option value="rapid">Rapid / Bot-like</option>
+            </select>
+          </div>
+        </div>
+        <div class="fr3">
+          <div class="fg">
+            <label class="fl">Device trust</label>
+            <select class="fi" id="ml-dev">
+              <option value="known">Known device</option>
+              <option value="new">New device</option>
+              <option value="suspicious">Suspicious</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Geo anomaly</label>
+            <select class="fi" id="ml-geo">
+              <option value="none">None</option>
+              <option value="mild">Mild drift</option>
+              <option value="extreme">Extreme jump</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Data volume</label>
+            <select class="fi" id="ml-vol">
+              <option value="normal">Normal</option>
+              <option value="large">Large query</option>
+              <option value="bulk">Full dump</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Threat Intelligence -->
+      <div class="ti-section">
+        <div class="ti-title">THREAT INTELLIGENCE MODULE — INDICATORS</div>
+        <div class="fr2">
+          <div class="fg">
+            <label class="fl">IP Reputation</label>
+            <select class="fi" id="ti-ip">
+              <option value="clean">Clean — no flags</option>
+              <option value="watchlist">Watchlist match</option>
+              <option value="blacklisted">Blacklisted IP</option>
+              <option value="datacenter">Datacenter / Hosting</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Known Threat Actor</label>
+            <select class="fi" id="ti-actor">
+              <option value="none">No match</option>
+              <option value="low">Low confidence match</option>
+              <option value="high">High confidence match</option>
+            </select>
+          </div>
+        </div>
+        <div class="fr2">
+          <div class="fg">
+            <label class="fl">Attack Pattern IOC</label>
+            <select class="fi" id="ti-ioc">
+              <option value="none">No IOC detected</option>
+              <option value="scraping">Scraping pattern</option>
+              <option value="injection">Injection attempt</option>
+              <option value="exfil">Data exfiltration signal</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Data Breach History</label>
+            <select class="fi" id="ti-breach">
+              <option value="none">No breach</option>
+              <option value="minor">Minor incident</option>
+              <option value="major">Major breach flag</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="u-err" class="ferr" style="display:none;">⚠ Please fill all required (*) fields</div>
+      <button class="btn btn-blue" onclick="submitUser()" style="margin-top:10px;">⚡ Run All Engines & Store Securely</button>
+      <div class="back" onclick="goTo('s-portal')">← Back to portal</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SCREEN 3: MANAGER LOGIN                       -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="screen" id="s-mgr-login">
+  <div class="form-wrap">
+    <div class="form-card fc-mgr">
+      <div class="form-h" style="color:var(--gold)">Manager Login</div>
+      <div class="form-s">One-time session credentials generated each visit.<br/>Context-aware authentication with threat scoring.</div>
+      <div class="creds-box" id="creds-display">
+        <div class="creds-title">SESSION CREDENTIALS — RANDOMLY GENERATED</div>
+        <div class="cred-row">
+          <span class="cred-k">EMPLOYEE ID</span>
+          <span class="cred-v" id="gen-id">—</span>
+          <button class="copy-btn" onclick="copyField('gen-id','m-id')">Copy →</button>
+        </div>
+        <div class="cred-row">
+          <span class="cred-k">PASSWORD</span>
+          <span class="cred-v" id="gen-pw">—</span>
+          <button class="copy-btn" onclick="copyField('gen-pw','m-pass')">Copy →</button>
+        </div>
+        <div class="creds-warn">⚠ Credentials valid for this session only. Auto-rotate on logout. Attempts are logged by audit engine.</div>
+      </div>
+      <div class="fg"><label class="fl">Employee ID</label><input class="fi" id="m-id" placeholder="Paste from above"/></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="m-pass" placeholder="Paste from above"/></div>
+      <div id="m-err" class="ferr">✗ Invalid credentials — access denied & logged</div>
+      <button class="btn btn-gold" onclick="managerLogin()">Authenticate & Enter</button>
+      <div class="back" onclick="goTo('s-portal')">← Back</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SCREEN 4: USER DASHBOARD                      -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="screen" id="s-user-dash">
+  <div class="topbar">
+    <div class="tb-av" style="background:var(--bluefade);border:2px solid rgba(30,111,194,0.2);">👤</div>
+    <div><div class="tb-nm" id="ud-nm"></div><div class="tb-rl" style="color:var(--blue2)">CUSTOMER · PERSONAL VIEW · 7 MODULES APPLIED</div></div>
+    <div class="tb-r">
+      <div class="chip chip-green"><span class="blink">●</span>Stored</div>
+      <button class="logout-btn" onclick="goTo('s-portal')">Log out</button>
+    </div>
+  </div>
+  <div class="sbanner" id="ud-banner"></div>
+
+  <!-- Pipeline visualization -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-h">Protection Pipeline — Execution Flow</div>
+    <div class="pipeline" id="ud-pipeline"></div>
+  </div>
+
+  <div class="dgrid">
+    <div>
+      <div class="card">
+        <div class="card-h">Banking Record — PDE Applied</div>
+        <div class="prof-h">
+          <div class="prof-av" style="background:var(--bluefade);">👤</div>
+          <div><div class="prof-nm" id="ud-pn" style="color:var(--blue2)"></div><div class="prof-id" id="ud-pid"></div></div>
+        </div>
+        <div class="flist" id="ud-fl"></div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <div class="card-h">Metadata Tags</div>
+        <div id="ud-meta-tags"></div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab(this,'ud-tab-ml')">ML Classifier</div>
+          <div class="tab" onclick="switchTab(this,'ud-tab-rules')">Rule Engine</div>
+          <div class="tab" onclick="switchTab(this,'ud-tab-ti')">Threat Intel</div>
+          <div class="tab" onclick="switchTab(this,'ud-tab-ctx')">Context</div>
+        </div>
+        <div class="tab-content active" id="ud-tab-ml">
+          <div id="ud-ml-panel"></div>
+          <div id="ud-lock-panel"></div>
+        </div>
+        <div class="tab-content" id="ud-tab-rules">
+          <div id="ud-rule-panel"></div>
+        </div>
+        <div class="tab-content" id="ud-tab-ti">
+          <div id="ud-ti-panel"></div>
+        </div>
+        <div class="tab-content" id="ud-tab-ctx">
+          <div id="ud-ctx-panel"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <div class="card-h">Protection Decision Engine</div>
+        <div id="ud-pde-panel"></div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <div class="card-h">Compliance</div>
+        <div class="comp-row"><span class="ct">✓ RBI</span><span class="ct">✓ GDPR</span><span class="ct">✓ PCI-DSS</span><span class="ct">✓ ISO 27001</span><span class="ct">✓ DPDP Act</span><span class="ct">✓ Aadhaar Act</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SCREEN 5: MANAGER DASHBOARD                   -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="screen" id="s-mgr-dash">
+  <div class="topbar">
+    <div class="tb-av" style="background:var(--goldfade);border:2px solid rgba(212,168,67,0.2);">👔</div>
+    <div><div class="tb-nm" id="md-id-display"></div><div class="tb-rl" style="color:var(--gold)">BRANCH MANAGER · AUTHENTICATED · ALL MODULES ACTIVE</div></div>
+    <div class="tb-r">
+      <div class="chip chip-gold"><span class="blink">●</span>Verified</div>
+      <button class="logout-btn" onclick="doMgrLogout()">Log out & Rotate</button>
+    </div>
+  </div>
+
+  <div class="dgrid">
+    <!-- LEFT -->
+    <div>
+      <div class="card">
+        <div class="card-h">All Customer Records <span id="rec-count" style="color:var(--gold);margin-left:5px;font-size:8px;"></span></div>
+        <div style="overflow-x:auto;">
+          <table class="rec-table">
+            <thead><tr><th>Name</th><th>Account</th><th>ML Score</th><th>Risk</th><th>Class</th><th>Stored</th></tr></thead>
+            <tbody id="rec-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <div class="card-h">Record Detail — Full Decrypted</div>
+        <div id="detail-empty" style="font-family:var(--mono);font-size:9px;color:var(--txt2);padding:16px 0;text-align:center;">↑ Select a record above</div>
+        <div id="detail-body" style="display:none;">
+          <div class="prof-h">
+            <div class="prof-av" style="background:var(--goldfade);">👤</div>
+            <div><div class="prof-nm" id="md-pn" style="color:var(--gold)"></div><div class="prof-id" id="md-pid"></div></div>
+          </div>
+          <div class="flist" id="md-fl"></div>
+          <div style="margin-top:10px;" id="md-meta-tags"></div>
+        </div>
+      </div>
+    </div>
+    <!-- RIGHT -->
+    <div>
+      <div class="card">
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab(this,'md-tab-ml')">ML + PDE</div>
+          <div class="tab" onclick="switchTab(this,'md-tab-rules')">Rules</div>
+          <div class="tab" onclick="switchTab(this,'md-tab-ti')">Threat Intel</div>
+          <div class="tab" onclick="switchTab(this,'md-tab-ctx')">Context</div>
+        </div>
+        <div class="tab-content active" id="md-tab-ml">
+          <div id="md-ml-panel"><div style="font-family:var(--mono);font-size:9px;color:var(--txt2);padding:12px 0;">Select a record</div></div>
+          <div id="md-lock-panel"></div>
+          <div id="md-pde-panel"></div>
+        </div>
+        <div class="tab-content" id="md-tab-rules">
+          <div id="md-rule-panel"><div style="font-family:var(--mono);font-size:9px;color:var(--txt2);padding:12px 0;">Select a record</div></div>
+        </div>
+        <div class="tab-content" id="md-tab-ti">
+          <div id="md-ti-panel"><div style="font-family:var(--mono);font-size:9px;color:var(--txt2);padding:12px 0;">Select a record</div></div>
+        </div>
+        <div class="tab-content" id="md-tab-ctx">
+          <div id="md-ctx-panel"><div style="font-family:var(--mono);font-size:9px;color:var(--txt2);padding:12px 0;">Select a record</div></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <div class="card-h">Context-Aware Audit Log</div>
+        <div id="md-audit"></div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <div class="card-h">Compliance</div>
+        <div class="comp-row"><span class="ct">✓ RBI</span><span class="ct">✓ GDPR</span><span class="ct">✓ PCI-DSS</span><span class="ct">✓ ISO 27001</span><span class="ct">✓ DPDP Act</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SCREEN 6: THIRD PARTY                         -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="screen" id="s-third">
+  <div class="topbar">
+    <div class="tb-av" style="background:var(--redfade);border:2px solid rgba(194,53,53,0.2);">🌐</div>
+    <div><div class="tb-nm" style="color:var(--red2)">UNAUTHORIZED EXTERNAL SESSION</div><div class="tb-rl" style="color:rgba(194,53,53,0.55)">THIRD-PARTY · FULL REDACTION + ANONYMISATION · ALL MODULES BLOCKING</div></div>
+    <div class="tb-r">
+      <div class="chip chip-red"><span class="blink">●</span>CRITICAL</div>
+      <button class="logout-btn" onclick="goTo('s-portal')">Leave</button>
+    </div>
+  </div>
+  <div class="denied">
+    <div class="denied-t">🚨 PDE DECISION: FULL_REDACTION + ANONYMISATION — ML: 100/100 — Threat Intel: HIGH — Context: EXTERNAL_UNAUTH</div>
+    <div class="denied-s">Context engine detected external, unauthenticated session. Threat intelligence matched external indicators. Rule engine triggered RB-001, RB-002, RB-003. ML classifier scored CRITICAL. PDE issued FULL_REDACTION with ANONYMISATION on all 14 fields. Metadata tags stripped. Audit event CRITICAL-BLOCK generated.</div>
+  </div>
+
+  <!-- Pipeline for third party -->
+  <div class="card" style="margin-bottom:14px;border-color:rgba(194,53,53,0.12);">
+    <div class="card-h" style="color:rgba(194,53,53,0.4);">Protection Pipeline — All Modules Blocked</div>
+    <div class="pipeline" id="tp-pipeline"></div>
+  </div>
+
+  <div class="dgrid">
+    <div>
+      <div class="card" style="border-color:rgba(194,53,53,0.12);">
+        <div class="card-h" style="color:rgba(194,53,53,0.4);">Customer Record — Anonymised & Redacted</div>
+        <div class="prof-h" style="border-color:rgba(194,53,53,0.1);background:rgba(194,53,53,0.02);">
+          <div class="prof-av" style="background:rgba(194,53,53,0.06);border-color:rgba(194,53,53,0.12);">🔒</div>
+          <div>
+            <div style="font-family:var(--serif);font-size:16px;color:rgba(194,53,53,0.35);">[IDENTITY ANONYMISED]</div>
+            <div style="font-size:8px;font-family:var(--mono);color:rgba(194,53,53,0.3);margin-top:2px;">ANON-ID: SHA256:3f7a9…</div>
+          </div>
+        </div>
+        <div class="flist" id="td-fl"></div>
+      </div>
+      <div class="card" style="margin-top:12px;border-color:rgba(194,53,53,0.12);">
+        <div class="card-h" style="color:rgba(194,53,53,0.4);">Rule Engine — Triggered Rules</div>
+        <div id="td-rules"></div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="border-color:rgba(194,53,53,0.12);">
+        <div class="card-h" style="color:rgba(194,53,53,0.4);">All Modules — Response</div>
+        <div class="s3">
+          <div class="sbox"><div class="sn" style="color:var(--red2);font-size:19px;">100</div><div class="sl">ML SCORE</div></div>
+          <div class="sbox"><div class="sn" style="color:var(--red2);font-size:12px;">HIGH</div><div class="sl">THREAT INTEL</div></div>
+          <div class="sbox"><div class="sn" style="color:var(--red2);font-size:12px;">3/3</div><div class="sl">RULES HIT</div></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:5px;">
+          <div class="threat-big" style="color:var(--red2)">100</div>
+          <span class="ml-badge" style="background:rgba(194,53,53,0.1);color:var(--red2);border:1px solid rgba(194,53,53,0.3);">CRITICAL</span>
+        </div>
+        <div class="tbar"><div class="tfill" style="width:100%;background:var(--red2)"></div></div>
+        <div style="margin-top:10px;">
+          <div class="irow" style="color:var(--red2);">Context: external, unauthenticated, unknown purpose</div>
+          <div class="irow" style="color:var(--red2);">ML classifier: all feature weights at maximum</div>
+          <div class="irow" style="color:var(--red2);">Rule engine: RB-001 + RB-002 + RB-003 triggered</div>
+          <div class="irow" style="color:var(--red2);">Threat Intel: IP + IOC + actor score = HIGH</div>
+          <div class="irow" style="color:var(--red2);border:none;">PDE: FULL_REDACTION + ANONYMISATION issued</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;border-color:rgba(194,53,53,0.12);">
+        <div class="card-h" style="color:rgba(194,53,53,0.4);">Context-Aware Audit — Blocked Event</div>
+        <div id="td-audit"></div>
+        <button class="btn btn-red btn-sm" style="margin-top:12px;" onclick="showHack()">⚡ Simulate Hack Attempt</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SCREEN 7: UNKNOWN PERSON VIEW                 -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="screen" id="s-unknown">
+  <div class="topbar">
+    <div class="tb-av" style="background:var(--amberfade);border:2px solid rgba(196,122,10,0.2);">🕵️</div>
+    <div>
+      <div class="tb-nm" style="color:var(--amber2)">UNKNOWN VISITOR — IDENTITY UNVERIFIED</div>
+      <div class="tb-rl" style="color:rgba(196,122,10,0.55)">UNAUTHENTICATED · RESTRICTED VIEW · PROTECTION ACTIVE · DATA MASKED</div>
+    </div>
+    <div class="tb-r">
+      <div class="chip chip-amber"><span class="blink">●</span>RESTRICTED</div>
+      <button class="logout-btn" onclick="goTo('s-portal')">Leave</button>
+    </div>
+  </div>
+
+  <!-- Upgrade banner -->
+  <div class="upgrade-banner">
+    <div class="upgrade-icon">🔐</div>
+    <div class="upgrade-text">
+      <div class="upgrade-title">You are viewing a restricted preview</div>
+      <div class="upgrade-sub">Your identity has not been verified. Sensitive fields are masked by the Protection Decision Engine. Authenticate as a Customer or Manager to see full data. This access attempt has been logged.</div>
+    </div>
+    <div class="upgrade-btns">
+      <button class="btn btn-amber btn-sm" style="width:auto;padding:7px 14px;font-size:10px;" onclick="goTo('s-user-reg')">Register as Customer</button>
+      <button class="btn btn-gold btn-sm" style="width:auto;padding:7px 14px;font-size:10px;" onclick="goTo('s-mgr-login')">Manager Login</button>
+    </div>
+  </div>
+
+  <!-- Warning bar -->
+  <div class="unk-warning">
+    <div class="unk-warning-t">⚠ PDE DECISION: PARTIAL_MASK + BLUR — ML: <span id="unk-ml-score-display">—</span>/100 — Context: UNAUTHENTICATED_VISITOR</div>
+    <div class="unk-warning-s">Context engine identified unauthenticated session. No role assigned. ML classifier computed risk from session signals. PDE applied partial masking to critical fields and blur-redaction to financial data. Identity fields anonymised. Audit event RESTRICTED-VIEW logged.</div>
+  </div>
+
+  <div class="dgrid">
+    <!-- LEFT: Record view with masked fields -->
+    <div>
+      <div class="card" style="border-color:rgba(196,122,10,0.15);">
+        <div class="card-h" style="color:rgba(196,122,10,0.5);">Customer Record — Identity Protected</div>
+        <!-- Blurred identity block -->
+        <div class="unk-id-block">
+          <div class="unk-id-avatar">🧑</div>
+          <div class="unk-id-name" id="unk-display-name">████████ █████</div>
+          <div class="unk-id-sub">IDENTITY MASKED · ADPE PROTECTION ACTIVE</div>
+          <div style="margin-top:8px;font-size:7px;font-family:var(--mono);color:rgba(196,122,10,0.25);letter-spacing:1px;">ANON-TOKEN: <span id="unk-anon-token">—</span></div>
+        </div>
+        <div class="flist" id="unk-fl"></div>
+      </div>
+      <div class="card" style="margin-top:12px;border-color:rgba(196,122,10,0.12);">
+        <div class="card-h" style="color:rgba(196,122,10,0.4);">What you can access</div>
+        <div class="access-score-panel">
+          <div class="access-score-h">ACCESS PERMISSION MATRIX</div>
+          <div class="access-item"><span class="access-icon">✓</span><span class="access-lbl">Account type (category)</span><span class="access-val">VISIBLE</span></div>
+          <div class="access-item"><span class="access-icon">✓</span><span class="access-lbl">Home branch (city only)</span><span class="access-val">VISIBLE</span></div>
+          <div class="access-item"><span class="access-icon">〜</span><span class="access-lbl">Name (first letter only)</span><span class="access-val" style="color:var(--amber2)">PARTIAL</span></div>
+          <div class="access-item"><span class="access-icon">〜</span><span class="access-lbl">IFSC (bank code only)</span><span class="access-val" style="color:var(--amber2)">PARTIAL</span></div>
+          <div class="access-item"><span class="access-icon">🔒</span><span class="access-lbl">Account number</span><span class="access-denied">MASKED</span></div>
+          <div class="access-item"><span class="access-icon">🔒</span><span class="access-lbl">Balance, credit score</span><span class="access-denied">MASKED</span></div>
+          <div class="access-item"><span class="access-icon">🔒</span><span class="access-lbl">PAN, Aadhaar</span><span class="access-denied">REDACTED</span></div>
+          <div class="access-item"><span class="access-icon">🔒</span><span class="access-lbl">Phone, email, address</span><span class="access-denied">REDACTED</span></div>
+          <div class="access-item"><span class="access-icon">🔒</span><span class="access-lbl">Date of birth</span><span class="access-denied">ANONYMISED</span></div>
+          <div class="access-item"><span class="access-icon">🔒</span><span class="access-lbl">Transactions</span><span class="access-denied">REDACTED</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Engine outputs + audit -->
+    <div>
+      <div class="card" style="border-color:rgba(196,122,10,0.12);">
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab(this,'unk-tab-ml')">ML + PDE</div>
+          <div class="tab" onclick="switchTab(this,'unk-tab-rules')">Rules</div>
+          <div class="tab" onclick="switchTab(this,'unk-tab-ctx')">Context</div>
+        </div>
+        <div class="tab-content active" id="unk-tab-ml">
+          <div id="unk-ml-panel"></div>
+          <div id="unk-lock-panel"></div>
+          <div id="unk-pde-panel"></div>
+        </div>
+        <div class="tab-content" id="unk-tab-rules">
+          <div id="unk-rule-panel"></div>
+        </div>
+        <div class="tab-content" id="unk-tab-ctx">
+          <div id="unk-ctx-panel"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;border-color:rgba(196,122,10,0.12);">
+        <div class="card-h" style="color:rgba(196,122,10,0.4);">Context-Aware Audit — Restricted View Event</div>
+        <div id="unk-audit"></div>
+      </div>
+      <div class="card" style="margin-top:12px;border-color:rgba(196,122,10,0.12);">
+        <div class="card-h" style="color:rgba(196,122,10,0.4);">Compliance</div>
+        <div class="comp-row"><span class="ct">✓ RBI</span><span class="ct">✓ GDPR</span><span class="ct">✓ PCI-DSS</span><span class="ct">✓ ISO 27001</span><span class="ct">✓ DPDP Act</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- .app -->
+
+<!-- HACK TERMINAL -->
+<div id="hack-overlay">
+  <div class="hack-box">
+    <div class="hack-h">▌ INTRUSION ATTEMPT — ALL MODULES RESPONDING</div>
+    <div id="hack-lines"></div>
+    <button class="hcl" onclick="closeHack()">← Close simulation</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════
+// 1. IndexedDB
+// ═══════════════════════════════════════════════════════
+const DB = { name:'SecureBankADPE5', ver:1, store:'customers' };
+let db = null;
+
+function openDB(){
+  return new Promise((res,rej)=>{
+    const r = indexedDB.open(DB.name, DB.ver);
+    r.onupgradeneeded = e => {
+      const d = e.target.result;
+      if(!d.objectStoreNames.contains(DB.store)){
+        const os = d.createObjectStore(DB.store,{keyPath:'id',autoIncrement:true});
+        os.createIndex('ts','ts',{unique:false});
+      }
+    };
+    r.onsuccess = e => { db = e.target.result; res(db); };
+    r.onerror   = e => rej(e);
+  });
+}
+function dbPut(rec){ return new Promise((res,rej)=>{ const r=db.transaction(DB.store,'readwrite').objectStore(DB.store).add(rec); r.onsuccess=()=>res(r.result); r.onerror=e=>rej(e); }); }
+function dbAll(){ return new Promise((res,rej)=>{ const r=db.transaction(DB.store,'readonly').objectStore(DB.store).getAll(); r.onsuccess=()=>res(r.result); r.onerror=e=>rej(e); }); }
+
+// ═══════════════════════════════════════════════════════
+// 2. CONTEXT AWARENESS ENGINE
+// ═══════════════════════════════════════════════════════
+function buildContext(role, formData){
+  const now = new Date();
+  const hour = now.getHours();
+  const dayOfWeek = now.getDay(); // 0=Sun
+
+  const timeCtx = hour>=9&&hour<18 ? 'business_hours' : hour>=18&&hour<22 ? 'evening' : 'off_hours';
+  const dayCtx  = dayOfWeek===0||dayOfWeek===6 ? 'weekend' : 'weekday';
+
+  // Regulatory jurisdiction map
+  const regMap = {
+    india_rbi: { label:'India — RBI/DPDP', laws:['RBI 2006','DPDP Act 2023','Aadhaar Act 2016','IT Act 2000'], piiFields:['pan','aadhaar','phone','accno','balance'] },
+    eu_gdpr:   { label:'European Union — GDPR', laws:['GDPR Art.25','PSD2','ePrivacy'], piiFields:['name','email','addr','dob','accno'] },
+    us_pci:    { label:'United States — PCI-DSS', laws:['PCI-DSS v4.0','GLBA','CCPA'], piiFields:['accno','balance','pan','cscore'] },
+    global:    { label:'Global Multi-jurisdiction', laws:['GDPR','PCI-DSS','RBI','ISO27001'], piiFields:['name','pan','aadhaar','accno','balance','email','phone'] },
+  };
+  const reg = regMap[formData?.ctxReg || 'india_rbi'];
+
+  // Device fingerprint (simulated)
+  const fingerprint = 'FP-' + (navigator.userAgent.length * 7 % 9999).toString(16).toUpperCase().padStart(4,'0');
+  const ua = navigator.userAgent;
+  const deviceType = /mobile/i.test(ua) ? 'mobile' : 'desktop';
+  const browser = /chrome/i.test(ua) ? 'Chrome' : /firefox/i.test(ua) ? 'Firefox' : /safari/i.test(ua) ? 'Safari' : 'Unknown';
+
+  return {
+    role,
+    timestamp: now.toISOString(),
+    timeContext: timeCtx,
+    dayContext: dayCtx,
+    jurisdiction: reg,
+    channel: formData?.ctxChannel || 'web_app',
+    purpose: formData?.ctxPurpose || 'account_mgmt',
+    sessionType: formData?.ctxSession || 'authenticated',
+    deviceFingerprint: fingerprint,
+    deviceType,
+    browser,
+    isWeekend: dayCtx === 'weekend',
+    isOffHours: timeCtx !== 'business_hours',
+    riskModifier: (timeCtx !== 'business_hours' ? 0.15 : 0) + (dayCtx === 'weekend' ? 0.1 : 0) + (role === 'third' ? 0.5 : 0),
+  };
+}
+
+// ═══════════════════════════════════════════════════════
+// 3. RULE-BASED CLASSIFICATION ENGINE
+// ═══════════════════════════════════════════════════════
+const RULES = [
+  { id:'RB-001', name:'External role block', condition: ctx => ctx.role === 'third', action:'FULL_REDACT_ALL', severity:'CRITICAL', category:'access_control' },
+  { id:'RB-002', name:'Off-hours sensitive access', condition:(ctx,ml)=>ctx.isOffHours&&ml.score>40, action:'ESCALATE_PROTECTION', severity:'HIGH', category:'temporal' },
+  { id:'RB-003', name:'TOR/Darknet network', condition:(ctx,ml,ti)=>ml.signals?.loc==='tor', action:'BLOCK_AND_ALERT', severity:'CRITICAL', category:'network' },
+  { id:'RB-004', name:'Blacklisted IP', condition:(ctx,ml,ti)=>ti.ipRep==='blacklisted', action:'FULL_REDACT_ALL', severity:'CRITICAL', category:'threat_intel' },
+  { id:'RB-005', name:'Bulk data dump attempt', condition:(ctx,ml)=>ml.signals?.vol==='bulk', action:'MASK_CRITICAL_FIELDS', severity:'HIGH', category:'data_volume' },
+  { id:'RB-006', name:'Rapid/bot-like access', condition:(ctx,ml)=>ml.signals?.vel==='rapid', action:'TOKENIZE_PII', severity:'HIGH', category:'velocity' },
+  { id:'RB-007', name:'Third-party data purpose', condition:(ctx)=>ctx.purpose==='third_party', action:'ANONYMISE_ALL', severity:'HIGH', category:'purpose' },
+  { id:'RB-008', name:'Analytics/reporting access', condition:(ctx)=>ctx.purpose==='analytics', action:'PSEUDONYMISE_DIRECT_ID', severity:'MEDIUM', category:'purpose' },
+  { id:'RB-009', name:'Multi-failure login', condition:(ctx,ml)=>ml.signals?.logins>=3, action:'ENCRYPT_CRITICAL', severity:'MEDIUM', category:'authentication' },
+  { id:'RB-010', name:'Extreme geo anomaly', condition:(ctx,ml)=>ml.signals?.geo==='extreme', action:'TOKENIZE_AND_ALERT', severity:'HIGH', category:'geolocation' },
+  { id:'RB-011', name:'New device access', condition:(ctx,ml)=>ml.signals?.dev==='new', action:'MASK_FINANCIAL', severity:'LOW', category:'device' },
+  { id:'RB-012', name:'Weekend off-hours', condition:(ctx)=>ctx.isWeekend&&ctx.isOffHours, action:'ENHANCED_LOGGING', severity:'LOW', category:'temporal' },
+];
+
+function runRuleEngine(context, mlResult, tiResult){
+  const triggered = [];
+  const notTriggered = [];
+  RULES.forEach(rule => {
+    try {
+      const hit = rule.condition(context, mlResult, tiResult);
+      (hit ? triggered : notTriggered).push({...rule, hit});
+    } catch(e) { notTriggered.push({...rule, hit:false}); }
+  });
+  // Determine highest severity action
+  const priority = ['BLOCK_AND_ALERT','FULL_REDACT_ALL','ANONYMISE_ALL','TOKENIZE_AND_ALERT','TOKENIZE_PII','ENCRYPT_CRITICAL','MASK_CRITICAL_FIELDS','MASK_FINANCIAL','PSEUDONYMISE_DIRECT_ID','ESCALATE_PROTECTION','ENHANCED_LOGGING','NONE'];
+  let topAction = 'NONE';
+  triggered.forEach(r => { if(priority.indexOf(r.action) < priority.indexOf(topAction)) topAction = r.action; });
+  return { triggered, notTriggered, topAction, triggeredCount: triggered.length };
+}
+
+// ═══════════════════════════════════════════════════════
+// 4. ML RISK CLASSIFIER (Weighted Logistic Regression)
+// ═══════════════════════════════════════════════════════
+const W = {
+  logins: {0:0, 1:10, 3:24, 5:40},
+  loc:    {internal:0, vpn:14, external:28, tor:48},
+  time:   {business:0, evening:7, latenight:18, wee:30},
+  vel:    {normal:0, high:12, bulk:26, rapid:42},
+  dev:    {known:0, new:15, suspicious:30},
+  geo:    {none:0, mild:10, extreme:28},
+  vol:    {normal:0, large:12, bulk:32},
+  external: 50,
+};
+
+function sigmoid(x){ return 1/(1+Math.exp(-x)); }
+
+function mlClassify(signals, role, ctxModifier){
+  let raw = 0;
+  raw += W.logins[signals.logins]||0;
+  raw += W.loc[signals.loc]||0;
+  raw += W.time[signals.time]||0;
+  raw += W.vel[signals.vel]||0;
+  raw += W.dev[signals.dev]||0;
+  raw += W.geo[signals.geo]||0;
+  raw += W.vol[signals.vol]||0;
+  if(role === 'third') raw += W.external;
+  // Context modifier
+  raw = Math.round(raw * (1 + (ctxModifier||0)));
+
+  const score = Math.max(0, Math.min(100, Math.round(sigmoid((raw-45)/18)*100)));
+  const level = score<20?'LOW': score<40?'MEDIUM': score<65?'HIGH':'CRITICAL';
+  const color = {LOW:'#24D49A', MEDIUM:'#F0A025', HIGH:'#F05050', CRITICAL:'#9B72F0'}[level];
+
+  // Multi-class classification output
+  const classLabel = score<20?'NORMAL_ACCESS': score<40?'ELEVATED_RISK': score<65?'SUSPICIOUS_ACTIVITY':'THREAT_DETECTED';
+  const confidence = score<20 ? 0.92 : score<40 ? 0.78 : score<65 ? 0.85 : 0.97;
+
+  const features = [
+    {name:'Login failures', val:W.logins[signals.logins]||0, max:40},
+    {name:'Network',        val:W.loc[signals.loc]||0,       max:48},
+    {name:'Access time',    val:W.time[signals.time]||0,     max:30},
+    {name:'Txn velocity',   val:W.vel[signals.vel]||0,       max:42},
+    {name:'Device trust',   val:W.dev[signals.dev]||0,       max:30},
+    {name:'Geo anomaly',    val:W.geo[signals.geo]||0,       max:28},
+    {name:'Data volume',    val:W.vol[signals.vol]||0,       max:32},
+  ];
+  return { score, level, color, features, rawSum:raw, classLabel, confidence, signals };
+}
+
+// ═══════════════════════════════════════════════════════
+// 5. THREAT INTELLIGENCE MODULE
+// ═══════════════════════════════════════════════════════
+function runThreatIntelligence(signals, tiInputs, role){
+  const ipScores  = {clean:0, watchlist:25, blacklisted:80, datacenter:30};
+  const actorScores = {none:0, low:20, high:60};
+  const iocScores = {none:0, scraping:35, injection:55, exfil:75};
+  const breachScores = {none:0, minor:15, major:45};
+
+  const ipScore     = ipScores[tiInputs.ipRep]||0;
+  const actorScore  = actorScores[tiInputs.actor]||0;
+  const iocScore    = iocScores[tiInputs.ioc]||0;
+  const breachScore = breachScores[tiInputs.breach]||0;
+
+  let total = role==='third' ? 100 : Math.min(100, Math.round((ipScore+actorScore+iocScore+breachScore)/2));
+  const tiLevel = total<20?'CLEAN': total<45?'WATCH': total<70?'SUSPICIOUS':'HIGH_THREAT';
+  const tiColor = {CLEAN:'#24D49A',WATCH:'#F0A025',SUSPICIOUS:'#F05050',HIGH_THREAT:'#9B72F0'}[tiLevel];
+
+  // IOC feed simulation
+  const iocFeed = [];
+  if(tiInputs.ipRep !== 'clean') iocFeed.push({type:'IP',value: `${Math.floor(Math.random()*200)+10}.${Math.floor(Math.random()*255)}.x.x`, score: ipScore});
+  if(tiInputs.ioc !== 'none')    iocFeed.push({type:'IOC', value: tiInputs.ioc.replace('_',' ').toUpperCase(), score: iocScore});
+  if(tiInputs.actor !== 'none')  iocFeed.push({type:'ACTOR', value:'TA-'+Math.floor(Math.random()*9000+1000), score: actorScore});
+
+  return { total, tiLevel, tiColor, ipScore, actorScore, iocScore, breachScore, iocFeed, ipRep:tiInputs.ipRep, actor:tiInputs.actor, ioc:tiInputs.ioc, breach:tiInputs.breach };
+}
+
+// ═══════════════════════════════════════════════════════
+// 6. METADATA TAGGER
+// ═══════════════════════════════════════════════════════
+function generateMetadata(record, context, mlResult, ruleResult, tiResult){
+  const ts = new Date().toISOString();
+  const tags = [];
+
+  // Sensitivity tags
+  tags.push({label:'PII:DIRECT', color:'#F05050', bg:'rgba(240,80,80,0.1)', border:'rgba(240,80,80,0.25)'});
+  tags.push({label:'FINANCIAL:SENSITIVE', color:'#F0A025', bg:'rgba(240,160,37,0.1)', border:'rgba(240,160,37,0.25)'});
+  if(record.aadhaar) tags.push({label:'AADHAAR:REGULATED', color:'#9B72F0', bg:'rgba(155,114,240,0.1)', border:'rgba(155,114,240,0.25)'});
+  if(record.pan)     tags.push({label:'TAX:PAN:PROTECTED', color:'#9B72F0', bg:'rgba(155,114,240,0.1)', border:'rgba(155,114,240,0.25)'});
+
+  // Jurisdiction tags
+  context.jurisdiction.laws.forEach(law => {
+    tags.push({label:law, color:'#24D49A', bg:'rgba(36,212,154,0.08)', border:'rgba(36,212,154,0.2)'});
+  });
+
+  // Risk tags
+  tags.push({label:`ML:${mlResult.classLabel}`, color:mlResult.color, bg:mlResult.color+'1A', border:mlResult.color+'44'});
+  if(ruleResult.triggered.length > 0){
+    ruleResult.triggered.slice(0,3).forEach(r => {
+      tags.push({label:`RULE:${r.id}`, color:'#F0A025', bg:'rgba(240,160,37,0.08)', border:'rgba(240,160,37,0.2)'});
+    });
+  }
+  if(tiResult.tiLevel !== 'CLEAN'){
+    tags.push({label:`THREAT:${tiResult.tiLevel}`, color:tiResult.tiColor, bg:tiResult.tiColor+'1A', border:tiResult.tiColor+'44'});
+  }
+
+  // Purpose / channel tags
+  tags.push({label:`CH:${context.channel.replace('_','-').toUpperCase()}`, color:'#22C8E8', bg:'rgba(34,200,232,0.08)', border:'rgba(34,200,232,0.2)'});
+  tags.push({label:`PURPOSE:${context.purpose.replace('_','-').toUpperCase()}`, color:'#22C8E8', bg:'rgba(34,200,232,0.08)', border:'rgba(34,200,232,0.2)'});
+  tags.push({label:`TIME:${context.timeContext.replace('_','-').toUpperCase()}`, color:'#6A7590', bg:'rgba(106,117,144,0.08)', border:'rgba(106,117,144,0.2)'});
+
+  return { tags, dataClassification: mlResult.score<20?'PUBLIC':mlResult.score<40?'INTERNAL':mlResult.score<65?'CONFIDENTIAL':'RESTRICTED', ts, processingId:'PROC-'+Date.now().toString(36).toUpperCase() };
+}
+
+// ═══════════════════════════════════════════════════════
+// 7. PROTECTION DECISION ENGINE (PDE)
+// ═══════════════════════════════════════════════════════
+const FIELD_DEFS = [
+  {key:'name',    label:'Full Name',          icon:'👤', cat:'direct_id',  sensitivity:'critical',  regulatedBy:['GDPR','DPDP']},
+  {key:'accno',   label:'Account Number',     icon:'💳', cat:'financial',  sensitivity:'critical',  regulatedBy:['PCI-DSS','RBI']},
+  {key:'balance', label:'Account Balance',    icon:'💰', cat:'financial',  sensitivity:'critical',  regulatedBy:['RBI','GDPR']},
+  {key:'pan',     label:'PAN Number',         icon:'🪪', cat:'gov_id',     sensitivity:'critical',  regulatedBy:['IT Act','DPDP']},
+  {key:'aadhaar', label:'Aadhaar Number',     icon:'🆔', cat:'gov_id',     sensitivity:'critical',  regulatedBy:['Aadhaar Act','DPDP']},
+  {key:'phone',   label:'Mobile Number',      icon:'📱', cat:'contact',    sensitivity:'sensitive', regulatedBy:['DPDP','GDPR']},
+  {key:'email',   label:'Email Address',      icon:'✉️', cat:'contact',    sensitivity:'sensitive', regulatedBy:['GDPR','DPDP']},
+  {key:'addr',    label:'Registered Address', icon:'🏠', cat:'contact',    sensitivity:'sensitive', regulatedBy:['GDPR','DPDP']},
+  {key:'dob',     label:'Date of Birth',      icon:'🎂', cat:'quasi_id',   sensitivity:'sensitive', regulatedBy:['GDPR','DPDP']},
+  {key:'cscore',  label:'Credit Score',       icon:'📊', cat:'financial',  sensitivity:'sensitive', regulatedBy:['RBI','FCRA']},
+  {key:'txn',     label:'Last Transaction',   icon:'🔄', cat:'financial',  sensitivity:'sensitive', regulatedBy:['PCI-DSS','RBI']},
+  {key:'ifsc',    label:'IFSC Code',          icon:'🏦', cat:'routing',    sensitivity:'internal',  regulatedBy:['RBI']},
+  {key:'type',    label:'Account Type',       icon:'📁', cat:'account',    sensitivity:'internal',  regulatedBy:[]},
+  {key:'branch',  label:'Home Branch',        icon:'📍', cat:'operational',sensitivity:'internal',  regulatedBy:[]},
+];
+
+// PDE: field-level protection decision matrix
+function makeProtectionDecision(field, role, mlResult, ruleResult, tiResult, context){
+  const { sensitivity } = field;
+  let method = 'visible';
+  let reason = 'default_access';
+
+  // Hard overrides from rules
+  if(ruleResult.topAction === 'FULL_REDACT_ALL' || ruleResult.topAction === 'BLOCK_AND_ALERT'){
+    return { method:'full_redaction', reason:'rule_engine:'+ruleResult.topAction, technique:'redaction' };
+  }
+  if(ruleResult.topAction === 'ANONYMISE_ALL'){
+    return { method:'anonymisation', reason:'rule_engine:ANONYMISE_ALL', technique:'k-anonymity' };
+  }
+
+  // Role-based base layer
+  if(role === 'third'){
+    return { method:'anonymisation', reason:'context:external_role', technique:'k-anonymity+suppression' };
+  }
+
+  // ML-score driven decisions per sensitivity
+  const score = mlResult.score;
+  if(sensitivity === 'critical'){
+    if(score < 20)  method = 'visible',        reason = 'ml:LOW+auth';
+    else if(score < 40) method = 'visible',    reason = 'ml:MEDIUM+trusted';
+    else if(score < 65) method = 'encryption', reason = 'ml:HIGH+encrypt';
+    else                method = 'full_redaction', reason = 'ml:CRITICAL+redact';
+  } else if(sensitivity === 'sensitive'){
+    if(score < 40)  method = 'visible',          reason = 'ml:LOW_MED';
+    else if(score < 65) method = 'masking',      reason = 'ml:HIGH+mask';
+    else                method = 'encryption',   reason = 'ml:CRITICAL+encrypt';
+  } else { // internal
+    method = 'visible'; reason = 'internal:always_visible';
+  }
+
+  // Threat intelligence override
+  if(tiResult.tiLevel === 'HIGH_THREAT' && method === 'visible'){
+    method = sensitivity === 'critical' ? 'full_redaction' : 'masking';
+    reason = 'threat_intel:HIGH_THREAT';
+  }
+
+  // Purpose-based transforms (privacy-preserving)
+  if(context.purpose === 'analytics' && sensitivity === 'critical'){
+    if(method === 'visible'){
+      method = 'pseudonymisation';
+      reason = 'purpose:analytics+pseudonymise';
+    }
+  }
+  if(context.purpose === 'third_party'){
+    if(field.cat === 'direct_id' || field.cat === 'gov_id'){
+      method = 'anonymisation';
+      reason = 'purpose:third_party+anonymise';
+    }
+  }
+
+  // Rule-specific overrides
+  if(ruleResult.triggered.some(r=>r.id==='RB-005') && sensitivity==='critical') { method='masking'; reason='rule:RB-005:bulk_mask'; }
+  if(ruleResult.triggered.some(r=>r.id==='RB-006') && field.cat==='direct_id')  { method='tokenization'; reason='rule:RB-006:tokenize'; }
+  if(ruleResult.triggered.some(r=>r.id==='RB-009') && sensitivity==='critical') { method='encryption'; reason='rule:RB-009:encrypt'; }
+
+  // Pseudonymisation for gov IDs when analytics
+  if(field.cat === 'gov_id' && context.purpose === 'analytics'){
+    method = 'pseudonymisation';
+    reason = 'purpose:analytics+gov_id_pseudo';
+  }
+
+  const techniqueMap = {
+    visible:'plaintext', masking:'partial_masking', tokenization:'format-preserving-token',
+    encryption:'AES-256-GCM', full_redaction:'suppression', anonymisation:'k-anon+generalisation',
+    pseudonymisation:'HMAC-SHA256-pseudonym',
+  };
+  return { method, reason, technique: techniqueMap[method]||'unknown' };
+}
+
+function runPDE(role, mlResult, ruleResult, tiResult, context){
+  const decisions = {};
+  FIELD_DEFS.forEach(f => {
+    decisions[f.key] = makeProtectionDecision(f, role, mlResult, ruleResult, tiResult, context);
+  });
+  return decisions;
+}
+
+// ═══════════════════════════════════════════════════════
+// 8. PROTECTION METHODS (applying PDE decisions)
+// ═══════════════════════════════════════════════════════
+const SENS_COLOR = {critical:'#F05050',sensitive:'#F0A025',internal:'#4A9AE8',public:'#24D49A'};
+const MSTYLE = {
+  visible:          {lbl:'Visible',      bg:'rgba(13,158,107,0.08)', c:'#24D49A', br:'rgba(13,158,107,0.25)'},
+  masking:          {lbl:'Masked',       bg:'rgba(196,122,10,0.08)', c:'#F0A025', br:'rgba(196,122,10,0.25)'},
+  tokenization:     {lbl:'Token',        bg:'rgba(30,111,194,0.08)', c:'#4A9AE8', br:'rgba(30,111,194,0.25)'},
+  encryption:       {lbl:'AES-256',      bg:'rgba(107,66,200,0.08)', c:'#9B72F0', br:'rgba(107,66,200,0.25)'},
+  full_redaction:   {lbl:'Redacted',     bg:'rgba(194,53,53,0.06)', c:'#F05050', br:'rgba(194,53,53,0.2)'},
+  anonymisation:    {lbl:'Anonymised',   bg:'rgba(196,122,10,0.06)', c:'#F0A025', br:'rgba(196,122,10,0.2)'},
+  pseudonymisation: {lbl:'Pseudonym',    bg:'rgba(10,143,168,0.08)', c:'#22C8E8', br:'rgba(10,143,168,0.25)'},
+};
+
+const TOK={}, PSEUDO={};
+function h32(s){let h=5381;for(let i=0;i<s.length;i++){h=((h<<5)+h)+s.charCodeAt(i);h|=0;}return Math.abs(h).toString(16).padStart(8,'0').toUpperCase();}
+
+function applyMethod(v, method, fieldKey){
+  if(!v||v==='—') return '—';
+  const s = String(v);
+  switch(method){
+    case 'visible':          return s;
+    case 'masking':          return '•'.repeat(Math.max(0,s.length-3))+s.slice(-3);
+    case 'tokenization':     { const k=h32(s); if(!TOK[k]) TOK[k]='TKN-'+k.slice(0,4)+'-'+k.slice(4,8); return TOK[k]; }
+    case 'encryption':       return 'AES256-GCM:'+h32(s+'k9s2').slice(0,8)+'…iv:'+h32(s).slice(0,4);
+    case 'full_redaction':   return '[REDACTED]';
+    case 'anonymisation':    return '[ANON:k=5:'+h32(s).slice(0,6)+']';
+    case 'pseudonymisation': { const k=h32(s+'pepper'+fieldKey); if(!PSEUDO[k]) PSEUDO[k]='PSE-'+k.slice(0,4)+'-'+k.slice(4,8); return PSEUDO[k]; }
+    default:                 return '[PROTECTED]';
+  }
+}
+
+function valClass(method){
+  const map = {visible:'fv-plain', masking:'fv-masked', tokenization:'fv-masked', encryption:'fv-enc',
+    full_redaction:'fv-red', anonymisation:'fv-anon', pseudonymisation:'fv-pseudo'};
+  return map[method]||'fv-plain';
+}
+
+function renderFields(cid, record, pdeDecisions){
+  const el = document.getElementById(cid);
+  el.innerHTML='';
+  FIELD_DEFS.forEach(f=>{
+    const raw = record[f.key]||'—';
+    const dec = pdeDecisions[f.key]||{method:'full_redaction',reason:'no_decision'};
+    const pv  = applyMethod(raw, dec.method, f.key);
+    const ms  = MSTYLE[dec.method]||MSTYLE.full_redaction;
+    const vc  = valClass(dec.method);
+    const d = document.createElement('div');
+    d.className='frow';
+    d.innerHTML=`
+      <span class="frow-icon">${f.icon}</span>
+      <span class="frow-lbl">${f.label}</span>
+      <span class="frow-val ${vc}">${pv}</span>
+      <span class="sdot" style="background:${SENS_COLOR[f.sensitivity]}"></span>
+      <span class="mtag" style="background:${ms.bg};color:${ms.c};border:1px solid ${ms.br}">${ms.lbl}</span>
+    `;
+    el.appendChild(d);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// 9. RENDER PANELS
+// ═══════════════════════════════════════════════════════
+function mlPanelHTML(ml){
+  const fc = ml.features.map(f=>{
+    const pct = f.max>0 ? Math.round(f.val/f.max*100) : 0;
+    const c = f.val>20?'#F05050':f.val>8?'#F0A025':'#24D49A';
+    return `<div class="ml-feat">
+      <div class="mf-name">${f.name}</div>
+      <div class="mf-score" style="color:${c}">${f.val>0?'+'+f.val:'0'}</div>
+      <div class="mf-bar"><div class="mf-fill" style="width:${pct}%;background:${c}"></div></div>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="ml-panel">
+      <div class="ml-panel-h">
+        <span>LOGISTIC REGRESSION CLASSIFIER</span>
+        <span class="ml-badge" style="background:${ml.color}18;color:${ml.color};border:1px solid ${ml.color}44">${ml.level}</span>
+      </div>
+      <div class="ml-score-row">
+        <div>
+          <div style="font-size:8px;color:var(--txt2);font-family:var(--mono);letter-spacing:1px;margin-bottom:2px;">RISK SCORE</div>
+          <div class="ml-score-big" style="color:${ml.color}">${ml.score}</div>
+          <div style="font-size:8px;font-family:var(--mono);color:${ml.color};margin-top:2px;">CLASS: ${ml.classLabel}</div>
+          <div style="font-size:7px;font-family:var(--mono);color:var(--txt2);">Confidence: ${(ml.confidence*100).toFixed(0)}%</div>
+        </div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--txt2);text-align:right;line-height:1.8;">
+          Raw Σ: ${ml.rawSum}<br/>
+          σ((Σ-45)/18)×100<br/>
+          Algorithm: LR
+        </div>
+      </div>
+      <div class="ml-features-grid">${fc}</div>
+      <div style="font-size:8px;color:var(--txt2);font-family:var(--mono);margin-bottom:3px;display:flex;justify-content:space-between;">
+        <span>Overall risk</span><span style="color:${ml.color}">${ml.score}/100</span>
+      </div>
+      <div class="ml-total-bar"><div class="ml-total-fill" style="width:${ml.score}%;background:${ml.color}"></div></div>
+      <div style="font-size:7px;color:var(--txt3);font-family:var(--mono);margin-top:5px;text-align:right;">σ(Σwᵢxᵢ) → [0,100] · Context modifier: +${ml.rawSum>0?'applied':'none'}</div>
+    </div>
+  `;
+}
+
+function rulePanelHTML(ruleResult){
+  const sevColor = {CRITICAL:'#9B72F0',HIGH:'#F05050',MEDIUM:'#F0A025',LOW:'#24D49A'};
+  const actionColor = {'FULL_REDACT_ALL':'#F05050','BLOCK_AND_ALERT':'#9B72F0','ANONYMISE_ALL':'#F05050','TOKENIZE_AND_ALERT':'#F0A025','TOKENIZE_PII':'#4A9AE8','ENCRYPT_CRITICAL':'#9B72F0','MASK_CRITICAL_FIELDS':'#F0A025','MASK_FINANCIAL':'#F0A025','PSEUDONYMISE_DIRECT_ID':'#22C8E8','ESCALATE_PROTECTION':'#F0A025','ENHANCED_LOGGING':'#24D49A','NONE':'#6A7590'};
+
+  const rows = ruleResult.triggered.map(r=>`
+    <div class="rule-row" style="border-color:${sevColor[r.severity]}30;">
+      <span class="rule-id" style="color:${sevColor[r.severity]}">${r.id}</span>
+      <span class="rule-cond">${r.name}</span>
+      <span class="rule-result" style="background:${actionColor[r.action]||'#888'}18;color:${actionColor[r.action]||'#888'};border:1px solid ${actionColor[r.action]||'#888'}33;">${r.action.replace(/_/g,' ')}</span>
+      <span class="rwp-badge">${r.category}</span>
+    </div>
+  `).join('');
+
+  const notRows = ruleResult.notTriggered.slice(0,3).map(r=>`
+    <div class="rule-row" style="opacity:.4">
+      <span class="rule-id" style="color:var(--txt3)">${r.id}</span>
+      <span class="rule-cond">${r.name}</span>
+      <span class="rule-result" style="background:var(--bg4);color:var(--txt3);border:1px solid var(--brd);">NOT HIT</span>
+    </div>
+  `).join('');
+
+  return `
+    <div class="rule-panel">
+      <div class="rule-h">RULE-BASED CLASSIFIER — ${ruleResult.triggeredCount} RULES HIT · Top action: <span style="color:${actionColor[ruleResult.topAction]||'#888'}">${ruleResult.topAction.replace(/_/g,' ')}</span></div>
+      ${rows || '<div style="font-family:var(--mono);font-size:9px;color:var(--txt2);">No rules triggered — access within bounds</div>'}
+      ${notRows ? `<div style="font-family:var(--mono);font-size:7px;color:var(--txt3);margin-top:8px;letter-spacing:1px;">SAMPLE NOT TRIGGERED:</div>${notRows}` : ''}
+    </div>
+  `;
+}
+
+function tiPanelHTML(ti){
+  const iocRows = ti.iocFeed.map(ioc=>`
+    <div class="ti-row">
+      <span class="ti-icon">🔍</span>
+      <span class="ti-lbl">${ioc.type}</span>
+      <span class="ti-val" style="color:${ioc.score>40?'#F05050':ioc.score>15?'#F0A025':'#24D49A'}">${ioc.value}</span>
+      <span style="font-family:var(--mono);font-size:8px;color:var(--txt2);">score: ${ioc.score}</span>
+    </div>
+  `).join('') || '<div class="ti-row"><span class="ti-icon">✓</span><span class="ti-lbl" style="color:#24D49A">No IOC matches found</span></div>';
+
+  return `
+    <div class="ti-panel">
+      <div class="ti-h">
+        <span>THREAT INTELLIGENCE MODULE</span>
+        <span style="background:${ti.tiColor}18;color:${ti.tiColor};border:1px solid ${ti.tiColor}44;padding:3px 8px;border-radius:4px;font-size:8px;">${ti.tiLevel.replace('_',' ')}</span>
+      </div>
+      <div class="ti-row"><span class="ti-icon">🌐</span><span class="ti-lbl">IP Reputation</span><span class="ti-val ${ti.ipScore>40?'ti-danger':ti.ipScore>10?'ti-warn':'ti-safe'}">${ti.ipRep.replace('_',' ').toUpperCase()}</span><span style="font-family:var(--mono);font-size:8px;color:var(--txt2);">+${ti.ipScore}</span></div>
+      <div class="ti-row"><span class="ti-icon">👤</span><span class="ti-lbl">Threat Actor Match</span><span class="ti-val ${ti.actorScore>40?'ti-danger':ti.actorScore>10?'ti-warn':'ti-safe'}">${ti.actor.replace('_',' ').toUpperCase()}</span><span style="font-family:var(--mono);font-size:8px;color:var(--txt2);">+${ti.actorScore}</span></div>
+      <div class="ti-row"><span class="ti-icon">⚡</span><span class="ti-lbl">IOC Pattern</span><span class="ti-val ${ti.iocScore>40?'ti-danger':ti.iocScore>10?'ti-warn':'ti-safe'}">${ti.ioc.replace('_',' ').toUpperCase()}</span><span style="font-family:var(--mono);font-size:8px;color:var(--txt2);">+${ti.iocScore}</span></div>
+      <div class="ti-row"><span class="ti-icon">🔓</span><span class="ti-lbl">Breach History</span><span class="ti-val ${ti.breachScore>30?'ti-danger':ti.breachScore>10?'ti-warn':'ti-safe'}">${ti.breach.replace('_',' ').toUpperCase()}</span><span style="font-family:var(--mono);font-size:8px;color:var(--txt2);">+${ti.breachScore}</span></div>
+      <div style="margin-top:10px;font-size:7px;color:var(--txt2);font-family:var(--mono);letter-spacing:1px;margin-bottom:6px;">IOC FEED MATCHES:</div>
+      ${iocRows}
+      <div style="margin-top:8px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;">
+        <span style="color:var(--txt2)">Composite TI score</span>
+        <span style="color:${ti.tiColor};font-weight:600">${ti.total}/100</span>
+      </div>
+      <div class="tbar"><div class="tfill" style="width:${ti.total}%;background:${ti.tiColor}"></div></div>
+    </div>
+  `;
+}
+
+function ctxPanelHTML(ctx){
+  return `
+    <div class="ctx-panel">
+      <div class="ctx-h">CONTEXT AWARENESS ENGINE</div>
+      <div class="ctx-row"><span class="ctx-icon">⚖️</span><span class="ctx-lbl">Jurisdiction</span><span class="ctx-val">${ctx.jurisdiction.label}</span></div>
+      <div class="ctx-row"><span class="ctx-icon">📱</span><span class="ctx-lbl">Access channel</span><span class="ctx-val">${ctx.channel.replace('_',' ').toUpperCase()}</span></div>
+      <div class="ctx-row"><span class="ctx-icon">🎯</span><span class="ctx-lbl">Data purpose</span><span class="ctx-val">${ctx.purpose.replace('_',' ').toUpperCase()}</span></div>
+      <div class="ctx-row"><span class="ctx-icon">🔑</span><span class="ctx-lbl">Session type</span><span class="ctx-val">${ctx.sessionType.replace('_',' ').toUpperCase()}</span></div>
+      <div class="ctx-row"><span class="ctx-icon">🕐</span><span class="ctx-lbl">Time context</span><span class="ctx-val ${ctx.isOffHours?'ti-warn':'ti-safe'}">${ctx.timeContext.replace(/_/g,' ').toUpperCase()}</span></div>
+      <div class="ctx-row"><span class="ctx-icon">📅</span><span class="ctx-lbl">Day context</span><span class="ctx-val ${ctx.isWeekend?'ti-warn':'ti-safe'}">${ctx.dayContext.replace('_',' ').toUpperCase()}</span></div>
+      <div class="ctx-row"><span class="ctx-icon">💻</span><span class="ctx-lbl">Device fingerprint</span><span class="ctx-val">${ctx.deviceFingerprint} (${ctx.deviceType})</span></div>
+      <div class="ctx-row"><span class="ctx-icon">🌐</span><span class="ctx-lbl">Browser</span><span class="ctx-val">${ctx.browser}</span></div>
+      <div class="ctx-row"><span class="ctx-icon">⚡</span><span class="ctx-lbl">Context risk modifier</span><span class="ctx-val ${ctx.riskModifier>0.2?'ti-warn':'ti-safe'}">+${(ctx.riskModifier*100).toFixed(0)}%</span></div>
+      <div style="margin-top:9px;font-size:7px;color:var(--txt2);font-family:var(--mono);letter-spacing:1px;">APPLICABLE LAWS:</div>
+      <div class="meta-tags" style="margin-top:5px;">${ctx.jurisdiction.laws.map(l=>`<span class="meta-tag" style="background:rgba(36,212,154,0.07);color:#24D49A;border:1px solid rgba(36,212,154,0.2);">${l}</span>`).join('')}</div>
+    </div>
+  `;
+}
+
+function pdePanelHTML(pdeDecisions){
+  const methodOrder = ['full_redaction','anonymisation','pseudonymisation','encryption','tokenization','masking','visible'];
+  const groups = {};
+  FIELD_DEFS.forEach(f=>{
+    const dec = pdeDecisions[f.key];
+    const m = dec?.method||'full_redaction';
+    if(!groups[m]) groups[m]=[];
+    groups[m].push({f, dec});
+  });
+
+  let html = '<div class="pde-panel"><div class="pde-h">PROTECTION DECISION ENGINE — FIELD DECISIONS</div>';
+  methodOrder.forEach(m=>{
+    if(!groups[m]) return;
+    const ms = MSTYLE[m]||MSTYLE.full_redaction;
+    groups[m].forEach(({f,dec})=>{
+      html += `<div class="pde-row">
+        <span class="pde-field" style="color:${SENS_COLOR[f.sensitivity]}">${f.label}</span>
+        <span class="pde-class mtag" style="background:${SENS_COLOR[f.sensitivity]}18;color:${SENS_COLOR[f.sensitivity]};border:1px solid ${SENS_COLOR[f.sensitivity]}33;">${f.sensitivity}</span>
+        <span class="pde-method mtag" style="background:${ms.bg};color:${ms.c};border:1px solid ${ms.br}">${ms.lbl}</span>
+        <span class="pde-reason">${dec?.reason||'—'}</span>
+      </div>`;
+    });
+  });
+  html += '</div>';
+  return html;
+}
+
+function lockPanelHTML(mlResult){
+  const lc = mlResult.color;
+  const desc = {LOW:'All fields accessible — risk within threshold.',MEDIUM:'Elevated — standard protection applied.',HIGH:'Significant risk — critical fields encrypted.',CRITICAL:'Maximum threat — full adaptive lock engaged.'}[mlResult.level];
+  return `
+    <div class="lock-panel" style="background:${lc}05;border-color:${lc}25;">
+      <div class="lock-h" style="color:${lc};">⚡ ADAPTIVE LOCK — ${mlResult.level} (${mlResult.score}/100)</div>
+      <div style="margin-top:4px;font-size:8px;color:var(--txt2);font-family:var(--mono);line-height:1.6;">${desc}</div>
+    </div>
+  `;
+}
+
+function metaTagsHTML(meta){
+  if(!meta) return '';
+  const tagRows = meta.tags.map(t=>`<span class="meta-tag" style="background:${t.bg};color:${t.color};border:1px solid ${t.border};">${t.label}</span>`).join('');
+  return `
+    <div style="font-size:7px;color:var(--txt2);font-family:var(--mono);letter-spacing:1.5px;margin-bottom:6px;">METADATA TAGS — Classification: <span style="color:var(--gold)">${meta.dataClassification}</span> · Processing ID: <span style="color:var(--txt2)">${meta.processingId}</span></div>
+    <div class="meta-tags">${tagRows}</div>
+  `;
+}
+
+function pipelineHTML(steps){
+  return steps.map((s,i)=>`
+    <div class="pipe-step">
+      <div class="pipe-box" style="background:${s.color}12;color:${s.color};border-color:${s.color}35;">${s.label}</div>
+      <div class="pipe-label">${s.sub}</div>
+    </div>
+    ${i<steps.length-1 ? '<span class="pipe-arrow">→</span>' : ''}
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// 10. CONTEXT-AWARE AUDIT LOG
+// ═══════════════════════════════════════════════════════
+const AUDIT = [];
+function logContextAudit(params){
+  AUDIT.unshift({
+    id: 'AUD-'+Date.now().toString(36).toUpperCase(),
+    ts: new Date().toLocaleString('en-IN',{hour12:true}),
+    ...params
+  });
+}
+
+function renderAudit(cid){
+  const el = document.getElementById(cid);
+  if(!el) return;
+  el.innerHTML = AUDIT.slice(0,5).map(e=>`
+    <div class="ae">
+      <span class="aid">${e.id}</span><br/>
+      <span class="ak">ts        : </span><span class="av">${e.ts}</span><br/>
+      <span class="ak">actor     : </span><span class="av">${e.actor} [${e.role}]</span><br/>
+      <span class="ak">context   : </span><span class="av">${e.context}</span><br/>
+      <span class="ak">ml_class  : </span><span class="av">${e.mlClass} (${e.mlScore}/100)</span><br/>
+      <span class="ak">rules_hit : </span><span class="av">${e.rulesHit}</span><br/>
+      <span class="ak">ti_level  : </span><span class="av">${e.tiLevel}</span><br/>
+      <span class="ak">pde_action: </span><span class="av">${e.pdeAction}</span><br/>
+      <span class="ak">jurisdiction: </span><span class="av">${e.jurisdiction}</span>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// 11. HELPER — PIPELINE STEPS
+// ═══════════════════════════════════════════════════════
+function buildPipelineSteps(ctx, ml, rules, ti, pde){
+  const ruleColor = rules.triggeredCount > 0 ? '#F0A025' : '#24D49A';
+  const pdeColor = ml.score > 60 ? '#F05050' : ml.score > 30 ? '#F0A025' : '#24D49A';
+  return [
+    {label:'Context\nEngine', sub:`${ctx.sessionType.slice(0,4)}·${ctx.channel.slice(0,3)}`, color:'#22C8E8'},
+    {label:'Rule\nClassifier', sub:`${rules.triggeredCount} rules hit`, color:ruleColor},
+    {label:'ML\nClassifier', sub:`Score: ${ml.score}`, color:ml.color},
+    {label:'Threat\nIntel', sub:`${ti.tiLevel.replace('_',' ')}`, color:ti.tiColor},
+    {label:'PDE\nDecision', sub:rules.topAction.slice(0,8), color:pdeColor},
+    {label:'Metadata\nTagger', sub:'tags applied', color:'#9B72F0'},
+    {label:'Audit\nLogger', sub:'event logged', color:'#D4A843'},
+  ];
+}
+
+// ═══════════════════════════════════════════════════════
+// 12. CREDENTIALS
+// ═══════════════════════════════════════════════════════
+let CREDS = {id:'', pw:''};
+function randStr(n, a='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz0123456789'){ return Array.from({length:n},()=>a[Math.floor(Math.random()*a.length)]).join(''); }
+function genCreds(){
+  CREDS.id = 'MGR-'+randStr(3,'ABCDEFGHJKLMNPQRSTUVWXYZ')+'-'+randStr(4,'0123456789');
+  CREDS.pw = randStr(4)+'@'+randStr(3,'0123456789')+'!'+randStr(3);
+  document.getElementById('gen-id').textContent = CREDS.id;
+  document.getElementById('gen-pw').textContent = CREDS.pw;
+}
+function copyField(srcId, dstId){
+  const val = document.getElementById(srcId).textContent;
+  document.getElementById(dstId).value = val;
+  navigator.clipboard.writeText(val).catch(()=>{});
+  toast('✓ Copied & pasted');
+}
+
+// ═══════════════════════════════════════════════════════
+// 13. NAVIGATION & TABS
+// ═══════════════════════════════════════════════════════
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function switchTab(tabEl, contentId){
+  const parent = tabEl.closest('.card');
+  parent.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  parent.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  tabEl.classList.add('active');
+  document.getElementById(contentId).classList.add('active');
+}
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ═══════════════════════════════════════════════════════
+// 14. USER SUBMIT
+// ═══════════════════════════════════════════════════════
+async function submitUser(){
+  const req=['u-name','u-accno','u-pan','u-aadhaar','u-phone','u-balance','u-email','u-addr','u-dob'];
+  if(req.some(id=>!document.getElementById(id).value.trim())){
+    const e=document.getElementById('u-err'); e.style.display='block';
+    setTimeout(()=>e.style.display='none',3500); return;
+  }
+  const g=id=>document.getElementById(id).value.trim();
+
+  const formData = {
+    ctxReg:     g('ctx-reg'), ctxChannel: g('ctx-channel'),
+    ctxPurpose: g('ctx-purpose'), ctxSession: g('ctx-session'),
+  };
+
+  const signals = {
+    logins:+g('ml-logins'), loc:g('ml-loc'), time:g('ml-time'),
+    vel:g('ml-vel'), dev:g('ml-dev'), geo:g('ml-geo'), vol:g('ml-vol'),
+  };
+
+  const tiInputs = {
+    ipRep:g('ti-ip'), actor:g('ti-actor'), ioc:g('ti-ioc'), breach:g('ti-breach'),
+  };
+
+  // Run all engines
+  const context   = buildContext('user', formData);
+  const mlResult  = mlClassify(signals, 'user', context.riskModifier);
+  const tiResult  = runThreatIntelligence(signals, tiInputs, 'user');
+  const ruleResult= runRuleEngine(context, mlResult, tiResult);
+  const pdeDecisions = runPDE('user', mlResult, ruleResult, tiResult, context);
+
+  const record = {
+    name:g('u-name'), accno:g('u-accno'), balance:g('u-balance'),
+    pan:g('u-pan'),   aadhaar:g('u-aadhaar'), phone:g('u-phone'),
+    email:g('u-email'), addr:g('u-addr'), dob:g('u-dob'),
+    cscore:g('u-cscore')||'N/A', txn:g('u-txn')||'N/A',
+    ifsc:g('u-ifsc')||'HDFC0001234', type:g('u-type')||'Savings',
+    branch:g('u-branch')||'Main Branch',
+    mlScore:mlResult.score, mlLevel:mlResult.level, mlClass:mlResult.classLabel,
+    signals, tiInputs, formData, context,
+    ts:new Date().toISOString(),
+  };
+
+  const meta = generateMetadata(record, context, mlResult, ruleResult, tiResult);
+  record.meta = meta;
+
+  if(db){ await dbPut(record); }
+
+  // Audit log
+  logContextAudit({
+    actor: record.name, role:'customer',
+    context: `${context.sessionType} · ${context.channel} · ${context.timeContext}`,
+    mlClass: mlResult.classLabel, mlScore: mlResult.score,
+    rulesHit: ruleResult.triggered.map(r=>r.id).join(', ') || 'none',
+    tiLevel: tiResult.tiLevel,
+    pdeAction: ruleResult.topAction || 'STANDARD_PROTECTION',
+    jurisdiction: context.jurisdiction.label,
+  });
+
+  // Render dashboard
+  document.getElementById('ud-nm').textContent = record.name;
+  document.getElementById('ud-pn').textContent  = record.name;
+  document.getElementById('ud-pid').textContent = 'Account: '+record.accno+' · '+meta.dataClassification;
+  document.getElementById('ud-banner').innerHTML =
+    `✓ Stored in IndexedDB · ML: <strong style="color:${mlResult.color}">${mlResult.score}/100 (${mlResult.classLabel})</strong> · Rules: ${ruleResult.triggeredCount} hit · TI: ${tiResult.tiLevel} · PDE: ${ruleResult.topAction||'STANDARD'}`;
+
+  renderFields('ud-fl', record, pdeDecisions);
+
+  const pipeSteps = buildPipelineSteps(context, mlResult, ruleResult, tiResult, pdeDecisions);
+  document.getElementById('ud-pipeline').innerHTML = pipelineHTML(pipeSteps);
+
+  document.getElementById('ud-ml-panel').innerHTML = mlPanelHTML(mlResult);
+  document.getElementById('ud-lock-panel').innerHTML = lockPanelHTML(mlResult);
+  document.getElementById('ud-rule-panel').innerHTML = rulePanelHTML(ruleResult);
+  document.getElementById('ud-ti-panel').innerHTML   = tiPanelHTML(tiResult);
+  document.getElementById('ud-ctx-panel').innerHTML  = ctxPanelHTML(context);
+  document.getElementById('ud-pde-panel').innerHTML  = pdePanelHTML(pdeDecisions);
+  document.getElementById('ud-meta-tags').innerHTML  = metaTagsHTML(meta);
+
+  goTo('s-user-dash');
+  toast(`✓ All 7 engines ran · Risk: ${mlResult.score}/100 · ${ruleResult.triggeredCount} rules · ${tiResult.tiLevel}`);
+}
+
+// ═══════════════════════════════════════════════════════
+// 15. MANAGER LOGIN
+// ═══════════════════════════════════════════════════════
+async function managerLogin(){
+  const uid  = document.getElementById('m-id').value.trim();
+  const pass = document.getElementById('m-pass').value.trim();
+  const err  = document.getElementById('m-err');
+
+  if(uid !== CREDS.id || pass !== CREDS.pw){
+    err.style.display='block';
+    logContextAudit({actor:uid||'unknown',role:'manager_attempt',context:'login_failure',mlClass:'N/A',mlScore:0,rulesHit:'RB-AUDIT',tiLevel:'N/A',pdeAction:'BLOCK_AND_LOG',jurisdiction:'N/A'});
+    setTimeout(()=>err.style.display='none',3000); return;
+  }
+
+  const records = db ? await dbAll() : [];
+  if(!records.length){ toast('⚠ No records — register a customer first'); return; }
+
+  document.getElementById('md-id-display').textContent = uid;
+  document.getElementById('rec-count').textContent = `(${records.length} record${records.length!==1?'s':''})`;
+
+  const tbody = document.getElementById('rec-tbody');
+  tbody.innerHTML='';
+  records.forEach((rec,i)=>{
+    const lc = {LOW:'#24D49A',MEDIUM:'#F0A025',HIGH:'#F05050',CRITICAL:'#9B72F0'}[rec.mlLevel]||'#24D49A';
+    const cls = rec.mlClass||'NORMAL_ACCESS';
+    const tr = document.createElement('tr');
+    tr.innerHTML=`
+      <td>${rec.name}</td>
+      <td style="color:var(--txt2)">${(rec.accno||'').slice(0,9)}…</td>
+      <td><span style="color:${lc};font-family:var(--mono)">${rec.mlScore}</span></td>
+      <td><span class="risk-badge" style="background:${lc}18;color:${lc};border:1px solid ${lc}44">${rec.mlLevel}</span></td>
+      <td><span style="font-size:8px;font-family:var(--mono);color:var(--txt2)">${cls.slice(0,10)}</span></td>
+      <td style="color:var(--txt2);font-size:8px;">${new Date(rec.ts).toLocaleString('en-IN',{dateStyle:'short',timeStyle:'short'})}</td>
+    `;
+    tr.addEventListener('click',()=>{
+      document.querySelectorAll('#rec-tbody tr').forEach(r=>r.classList.remove('selected'));
+      tr.classList.add('selected');
+      loadManagerRecord(rec);
+    });
+    tbody.appendChild(tr);
+    if(i===records.length-1) tr.click();
+  });
+
+  logContextAudit({actor:uid,role:'manager',context:'authenticated · internal · business_hours',mlClass:'NORMAL_ACCESS',mlScore:8,rulesHit:'none',tiLevel:'CLEAN',pdeAction:'STANDARD_VIEW',jurisdiction:'India — RBI/DPDP'});
+  renderAudit('md-audit');
+  goTo('s-mgr-dash');
+  toast('✓ Authenticated · '+records.length+' records · All modules active');
+}
+
+function loadManagerRecord(rec){
+  const signals  = rec.signals || {logins:0,loc:'internal',time:'business',vel:'normal',dev:'known',geo:'none',vol:'normal'};
+  const tiInputs = rec.tiInputs || {ipRep:'clean',actor:'none',ioc:'none',breach:'none'};
+  const formData = rec.formData || {};
+  const context  = rec.context || buildContext('manager', {});
+
+  const mlResult  = mlClassify(signals, 'manager', 0);
+  mlResult.score = rec.mlScore; mlResult.level = rec.mlLevel; mlResult.classLabel = rec.mlClass||'NORMAL_ACCESS';
+  mlResult.color = {LOW:'#24D49A',MEDIUM:'#F0A025',HIGH:'#F05050',CRITICAL:'#9B72F0'}[rec.mlLevel]||'#24D49A';
+
+  const tiResult  = runThreatIntelligence(signals, tiInputs, 'manager');
+  const ruleResult= runRuleEngine(context, mlResult, tiResult);
+  const pdeDecisions = runPDE('manager', mlResult, ruleResult, tiResult, context);
+
+  document.getElementById('detail-empty').style.display='none';
+  document.getElementById('detail-body').style.display='block';
+  document.getElementById('md-pn').textContent  = rec.name;
+  document.getElementById('md-pid').textContent = 'Account: '+rec.accno+' · Class: '+(rec.mlClass||'—');
+
+  renderFields('md-fl', rec, pdeDecisions);
+  if(rec.meta) document.getElementById('md-meta-tags').innerHTML = metaTagsHTML(rec.meta);
+
+  document.getElementById('md-ml-panel').innerHTML  = mlPanelHTML(mlResult);
+  document.getElementById('md-lock-panel').innerHTML= lockPanelHTML(mlResult);
+  document.getElementById('md-pde-panel').innerHTML = pdePanelHTML(pdeDecisions);
+  document.getElementById('md-rule-panel').innerHTML= rulePanelHTML(ruleResult);
+  document.getElementById('md-ti-panel').innerHTML  = tiPanelHTML(tiResult);
+  document.getElementById('md-ctx-panel').innerHTML = ctxPanelHTML(context);
+  renderAudit('md-audit');
+}
+
+function doMgrLogout(){
+  genCreds();
+  document.getElementById('m-id').value='';
+  document.getElementById('m-pass').value='';
+  goTo('s-portal');
+  toast('✓ Logged out · Credentials rotated · Session invalidated');
+}
+
+// ═══════════════════════════════════════════════════════
+// 16. THIRD PARTY
+// ═══════════════════════════════════════════════════════
+function thirdPartyEnter(){
+  const tiInputs = {ipRep:'blacklisted',actor:'high',ioc:'exfil',breach:'major'};
+  const signals  = {logins:5,loc:'tor',time:'latenight',vel:'rapid',dev:'suspicious',geo:'extreme',vol:'bulk'};
+  const context  = buildContext('third', {ctxReg:'global',ctxChannel:'api',ctxPurpose:'third_party',ctxSession:'guest'});
+  const mlResult = mlClassify(signals, 'third', context.riskModifier);
+  const tiResult = runThreatIntelligence(signals, tiInputs, 'third');
+  const ruleResult= runRuleEngine(context, mlResult, tiResult);
+  const pdeDecisions = runPDE('third', mlResult, ruleResult, tiResult, context);
+
+  // Build locked field list
+  const fl = document.getElementById('td-fl');
+  fl.innerHTML='';
+  FIELD_DEFS.forEach(f=>{
+    const dec = pdeDecisions[f.key];
+    const ms  = MSTYLE[dec.method]||MSTYLE.full_redaction;
+    const d = document.createElement('div');
+    d.className='frow'; d.style.opacity='.65';
+    d.innerHTML=`
+      <span class="frow-icon" style="opacity:.3">${f.icon}</span>
+      <span class="frow-lbl" style="color:rgba(194,53,53,0.4)">${f.label}</span>
+      <span class="frow-val fv-red">${dec.method==='anonymisation'?'[ANON:k=5]':'[REDACTED]'}</span>
+      <span class="sdot" style="background:rgba(194,53,53,0.25)"></span>
+      <span class="mtag" style="background:${ms.bg};color:${ms.c};border:1px solid ${ms.br}">${ms.lbl}</span>
+    `;
+    fl.appendChild(d);
+  });
+
+  // Pipeline
+  const pipeSteps = buildPipelineSteps(context, mlResult, ruleResult, tiResult, pdeDecisions);
+  document.getElementById('tp-pipeline').innerHTML = pipelineHTML(pipeSteps);
+
+  // Rule display
+  document.getElementById('td-rules').innerHTML = rulePanelHTML(ruleResult);
+
+  // Audit
+  logContextAudit({
+    actor:'EXTERNAL_UNKNOWN',role:'third_party',
+    context:`external · api · off_hours · TOR`,
+    mlClass:mlResult.classLabel, mlScore:mlResult.score,
+    rulesHit: ruleResult.triggered.map(r=>r.id).join(', '),
+    tiLevel: tiResult.tiLevel,
+    pdeAction:'FULL_REDACTION+ANONYMISATION',
+    jurisdiction:'Multi-jurisdiction — BLOCKED',
+  });
+  renderAudit('td-audit');
+
+  goTo('s-third');
+  toast('⚠ External session blocked — all 7 modules responded');
+}
+
+// ═══════════════════════════════════════════════════════
+// 17. HACK TERMINAL
+// ═══════════════════════════════════════════════════════
+function showHack(){
+  const lines=[
+    {c:'hc',t:'$ python3 adpe_bypass.py --target securebank.int --override-pde --dump-all --bypass-ml'},
+    {c:'hd',t:'[*] Connecting 10.0.12.88:443… TLS accepted'},
+    {c:'hd',t:'[*] MODULE 1: Context Engine… DETECTED (external · API · TOR · unauthenticated)'},
+    {c:'hd',t:'[*] MODULE 2: Rule Engine… RB-001,RB-003,RB-004,RB-007 TRIGGERED → FULL_REDACT_ALL'},
+    {c:'hd',t:'[*] MODULE 3: ML Classifier… Score: 100/100 · Class: THREAT_DETECTED · Confidence: 97%'},
+    {c:'hd',t:'[*] MODULE 4: Threat Intel… IP=BLACKLISTED · IOC=EXFILTRATION · TI=HIGH_THREAT'},
+    {c:'hd',t:'[*] MODULE 5: PDE Decision… ALL 14 FIELDS → ANONYMISATION + FULL_REDACTION'},
+    {c:'hd',t:'[*] MODULE 6: Metadata Tagger… THREAT tags applied · Access-attempt logged'},
+    {c:'hd',t:'[*] MODULE 7: Audit Logger… AUD-'+Date.now().toString(36).toUpperCase()+' created'},
+    {c:'hd',t:''},
+    {c:'hd',t:'┌──── INTERCEPTED RECORD ───────────────────────────┐'},
+    {c:'hr', t:'  name            →  [ANON:k=5:3f7a9c]'},
+    {c:'hr', t:'  account_number  →  [REDACTED]'},
+    {c:'hr', t:'  balance         →  [REDACTED]'},
+    {c:'hr', t:'  pan_number      →  [ANON:k=5:9b2e1a]'},
+    {c:'hr', t:'  aadhaar         →  [REDACTED]'},
+    {c:'hr', t:'  phone / email   →  [REDACTED]'},
+    {c:'hr', t:'  address / dob   →  [ANON:k=5:generalised]'},
+    {c:'hr', t:'  credit_score    →  [REDACTED]'},
+    {c:'hr', t:'  transactions    →  [REDACTED]'},
+    {c:'hd', t:'└───────────────────────────────────────────────────┘'},
+    {c:'hd', t:''},
+    {c:'he', t:'[!] CONTEXT ENGINE: Role=external, purpose=exfil, channel=TOR'},
+    {c:'he', t:'[!] RULE ENGINE: 4/12 rules triggered → top action: FULL_REDACT_ALL'},
+    {c:'he', t:'[!] ML CLASSIFIER: Score=100 → THREAT_DETECTED (97% confidence)'},
+    {c:'he', t:'[!] THREAT INTEL: IP blacklisted, IOC:exfiltration, actor:HIGH'},
+    {c:'he', t:'[!] PDE: k-anonymity + suppression applied before transmission'},
+    {c:'he', t:'[!] METADATA: RESTRICTED classification, 9 tags applied'},
+    {c:'he', t:'[!] AUDIT: Permanent CRITICAL-BLOCK event logged with full context'},
+    {c:'hc', t:'$ █  ALL 7 MODULES BLOCKED — ZERO DATA EXTRACTED'},
+  ];
+  const c=document.getElementById('hack-lines'); c.innerHTML='';
+  document.getElementById('hack-overlay').style.display='flex';
+  lines.forEach((l,i)=>setTimeout(()=>{
+    const d=document.createElement('div'); d.className='hline '+l.c; d.textContent=l.t||'\u00A0';
+    c.appendChild(d); c.scrollTop=c.scrollHeight;
+  },i*60));
+}
+function closeHack(){ document.getElementById('hack-overlay').style.display='none'; }
+
+// ═══════════════════════════════════════════════════════
+// 18. UNKNOWN PERSON VIEW
+// ═══════════════════════════════════════════════════════
+
+// PDE decisions for unknown person role — field-by-field
+function runPDE_Unknown(mlResult, ruleResult, tiResult, context) {
+  const decisions = {};
+  FIELD_DEFS.forEach(f => {
+    let method, reason;
+    switch(f.key){
+      case 'type':   method='visible';        reason='public:account_category'; break;
+      case 'branch': method='visible';        reason='public:branch_city'; break;
+      case 'name':   method='partial_reveal'; reason='unauth:name_initial_only'; break;
+      case 'ifsc':   method='partial_reveal'; reason='unauth:bank_code_only'; break;
+      case 'accno':  method='masking';        reason='unauth:account_mask'; break;
+      case 'cscore': method='masking';        reason='unauth:financial_mask'; break;
+      case 'balance':method='full_redaction'; reason='unauth:balance_hidden'; break;
+      case 'txn':    method='full_redaction'; reason='unauth:txn_hidden'; break;
+      case 'pan':    method='full_redaction'; reason='unauth:gov_id_hidden'; break;
+      case 'aadhaar':method='full_redaction'; reason='unauth:gov_id_hidden'; break;
+      case 'phone':  method='full_redaction'; reason='unauth:contact_hidden'; break;
+      case 'email':  method='full_redaction'; reason='unauth:contact_hidden'; break;
+      case 'addr':   method='full_redaction'; reason='unauth:contact_hidden'; break;
+      case 'dob':    method='anonymisation';  reason='unauth:quasi_id_anon'; break;
+      default:       method='masking';        reason='unauth:default_mask';
+    }
+    const techniqueMap={visible:'plaintext',masking:'partial_masking',partial_reveal:'first_char_only',full_redaction:'suppression',anonymisation:'k-anon+generalisation'};
+    decisions[f.key]={method, reason, technique:techniqueMap[method]||'unknown'};
+  });
+  return decisions;
+}
+
+function applyUnknownMethod(v, method, fieldKey) {
+  if(!v||v==='—') return '—';
+  const s = String(v).trim();
+  switch(method){
+    case 'visible':        return s;
+    case 'partial_reveal': return s[0] + '•'.repeat(Math.max(0, s.length - 1));
+    case 'masking':        return '•••• •••• '+s.slice(-3);
+    case 'full_redaction': return '[PROTECTED]';
+    case 'anonymisation':  return '[ANON:k=5]';
+    default:               return '[MASKED]';
+  }
+}
+
+function renderUnknownFields(record, pdeDecisions) {
+  const fl = document.getElementById('unk-fl');
+  fl.innerHTML = '';
+  FIELD_DEFS.forEach(f => {
+    const raw  = record[f.key] || '—';
+    const dec  = pdeDecisions[f.key] || {method:'full_redaction',reason:'no_decision'};
+    const pv   = applyUnknownMethod(raw, dec.method, f.key);
+    const ms   = MSTYLE[dec.method] || MSTYLE.full_redaction;
+    const isBlurred  = ['full_redaction','anonymisation','masking'].includes(dec.method);
+    const isPartial  = dec.method === 'partial_reveal';
+    const isVisible  = dec.method === 'visible';
+
+    const valStyle = isVisible ? 'color:var(--txt)' : isPartial ? 'color:var(--amber2)' : 'color:rgba(196,122,10,0.3);filter:blur(3px);user-select:none;';
+    const rowOpacity = isVisible ? '1' : isPartial ? '0.85' : '0.55';
+    const lockIcon = isVisible ? '' : isPartial ? '〜' : '🔒';
+
+    const d = document.createElement('div');
+    d.className = 'frow';
+    d.style.opacity = rowOpacity;
+    d.innerHTML = `
+      <span class="frow-icon" style="${isBlurred?'opacity:.3':''}">${f.icon}</span>
+      <span class="frow-lbl" style="${isBlurred?'color:rgba(196,122,10,0.3)':isPartial?'color:var(--amber2)':''}">${f.label}</span>
+      <span class="frow-val" style="${valStyle}">${pv}</span>
+      <span style="font-size:9px;margin-right:2px;">${lockIcon}</span>
+      <span class="sdot" style="background:${ms.c}66"></span>
+      <span class="mtag" style="background:${ms.bg};color:${ms.c};border:1px solid ${ms.br}">${ms.lbl==='Visible'?'Open':ms.lbl}</span>
+    `;
+    fl.appendChild(d);
+  });
+}
+
+async function unknownPersonEnter() {
+  // Get latest record from DB to display (or use sample data)
+  let record = {
+    name:'Sample User', accno:'4782-9201-3847-1029', balance:'₹8,42,500',
+    pan:'BNZPM1234F', aadhaar:'2841 6734 9201', phone:'+91 98765 43210',
+    email:'user@email.com', addr:'42, Sector 15, Noida - 201301', dob:'14 Mar 1988',
+    cscore:'782', txn:'₹12,000 — 12 Mar 2026', ifsc:'HDFC0001234',
+    type:'Savings — Premium', branch:'Connaught Place',
+  };
+  if(db){
+    const all = await dbAll();
+    if(all.length) record = all[all.length-1];
+  }
+
+  // Build context: unauthenticated, unknown role
+  const signals = {logins:0, loc:'external', time:'business', vel:'normal', dev:'new', geo:'mild', vol:'normal'};
+  const tiInputs = {ipRep:'clean', actor:'none', ioc:'none', breach:'none'};
+  const context  = buildContext('unknown', {ctxReg:'india_rbi', ctxChannel:'web_app', ctxPurpose:'account_mgmt', ctxSession:'guest'});
+
+  const mlResult  = mlClassify(signals, 'unknown', context.riskModifier + 0.2); // slight bump for unauth
+  const tiResult  = runThreatIntelligence(signals, tiInputs, 'unknown');
+  const ruleResult= runRuleEngine(context, mlResult, tiResult);
+  const pdeDecisions = runPDE_Unknown(mlResult, ruleResult, tiResult, context);
+
+  // Update display name (blurred) and anon token
+  const anonToken = 'ANON-' + h32(record.name || 'unknown').slice(0,8).toUpperCase();
+  document.getElementById('unk-display-name').textContent = (record.name||'Unknown User');
+  document.getElementById('unk-anon-token').textContent = anonToken;
+  document.getElementById('unk-ml-score-display').textContent = mlResult.score;
+
+  // Render blurred fields
+  renderUnknownFields(record, pdeDecisions);
+
+  // Render panels
+  document.getElementById('unk-ml-panel').innerHTML   = mlPanelHTML(mlResult);
+  document.getElementById('unk-lock-panel').innerHTML  = lockPanelHTML(mlResult);
+  document.getElementById('unk-pde-panel').innerHTML   = pdePanelHTML(pdeDecisions);
+  document.getElementById('unk-rule-panel').innerHTML  = rulePanelHTML(ruleResult);
+  document.getElementById('unk-ctx-panel').innerHTML   = ctxPanelHTML(context);
+
+  // Audit
+  logContextAudit({
+    actor:'UNKNOWN_VISITOR', role:'unauthenticated',
+    context:`guest · web_app · ${context.timeContext}`,
+    mlClass: mlResult.classLabel, mlScore: mlResult.score,
+    rulesHit: ruleResult.triggered.map(r=>r.id).join(', ') || 'none',
+    tiLevel: tiResult.tiLevel,
+    pdeAction: 'PARTIAL_MASK+BLUR — restricted view enforced',
+    jurisdiction: context.jurisdiction.label,
+  });
+  renderAudit('unk-audit');
+
+  goTo('s-unknown');
+  toast('⚠ Unknown session — data masked by PDE · restricted view only');
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+openDB().then(()=>toast('✓ ADPE v6.0 ready · 7 modules loaded · Unknown person view added')).catch(()=>toast('⚠ DB unavailable'));
+genCreds();
+</script>
+</body>
+</html>
